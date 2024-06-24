@@ -10,7 +10,6 @@ import beans.Entidad;
 import beans.Propiedad;
 import modelo.Cancion;
 import modelo.Playlist;
-import modelo.Usuario;
 import tds.driver.FactoriaServicioPersistencia;
 import tds.driver.ServicioPersistencia;
 

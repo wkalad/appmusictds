@@ -37,6 +37,14 @@ public class ControladorAppMusic implements CancionesListener{
 	private Usuario usuarioActual;//TODO Ver esto bien 
 	
 	
+	public static ControladorAppMusic getUnicaInstancia() {
+		
+		if(unicaInstancia == null) {
+			unicaInstancia = new ControladorAppMusic();
+		}
+		return unicaInstancia;
+	}
+	
 	private ControladorAppMusic() {
 		inicializarAdaptadores();
 		inicializarCatalogos();
@@ -88,7 +96,7 @@ public class ControladorAppMusic implements CancionesListener{
 		
 		List<Cancion> canciones = catalogoCanciones.getCanciones();
 		
-		canciones.contains(canciones);
+		//canciones.contains(canciones);
 		
 		Buscador buscador = new BuscadorSimple(canciones);
 		if(titulo != null) {
@@ -228,6 +236,10 @@ public class ControladorAppMusic implements CancionesListener{
 					 			catalogoCanciones.addCancion(c);
 				 			   });
 		
+	}
+	
+	public String getUsuarioActual() {
+		return usuarioActual.getNombre();
 	}
 
 }

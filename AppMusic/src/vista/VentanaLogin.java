@@ -12,21 +12,31 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.swing.*;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.border.SoftBevelBorder;
 
 import com.toedter.calendar.JCalendar;
 
+import controlador.ControladorAppMusic;
+
 public class VentanaLogin extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
+	
+	//Controlador
+	ControladorAppMusic controladorAppMusic = ControladorAppMusic.getUnicaInstancia();
+	
+	//Propiedades
+	JTextField textFieldUsuarioL;
+	JPasswordField contrasenaFieldL;
+	JLabel usuarioContrIncorrecto;
+	
 
 	/**
 	 * Launch the application.
@@ -62,6 +72,14 @@ public class VentanaLogin extends JFrame {
 	}
 	
 	private void inicializarJFrame() {
+		try {
+			UIManager.setLookAndFeel("com.jtattoo.plaf.hifi.HiFiLookAndFeel");
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		frame = new JFrame();
 		frame.setPreferredSize(new Dimension(300, 150));
 		frame.setResizable(false);
@@ -160,7 +178,7 @@ public class VentanaLogin extends JFrame {
 	}
 	
 	private JTextField insertaTextFieldUsuario(JPanel panelUsuarioLogin) {
-		JTextField textFieldUsuarioL = new JTextField();
+		textFieldUsuarioL = new JTextField();
 		textFieldUsuarioL.setOpaque(false);
 		textFieldUsuarioL.setForeground(new Color(255, 255, 255));
 		textFieldUsuarioL.setFont(new Font("Verdana", Font.BOLD, 10));
@@ -175,7 +193,7 @@ public class VentanaLogin extends JFrame {
 	}
 	
 	private JPasswordField insertaPasswordField(JPanel panelContrasenaLogin) {
-		JPasswordField contrasenaFieldL = new JPasswordField();
+		contrasenaFieldL = new JPasswordField();
 		contrasenaFieldL.setCaretColor(new Color(38, 38, 38));
 		contrasenaFieldL.setBorder(null);
 		contrasenaFieldL.setForeground(new Color(255, 255, 255));
@@ -201,6 +219,22 @@ public class VentanaLogin extends JFrame {
 	
 	private JButton crearBotonLogin(JPanel panelBotonera) {
 		JButton botonLogin = new JButton("Login");
+		botonLogin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String nombre = textFieldUsuarioL.getText();
+				String contrasena = contrasenaFieldL.getText();
+				
+				boolean validacion = controladorAppMusic.iniciarSesion(nombre, contrasena);
+				if(validacion) {
+					//TODO: Verificar
+					VentanaPrincipal ventanaPrincipal = new VentanaPrincipal();
+					ventanaPrincipal.setVisible(true);
+					frame.dispose();
+				}else {
+					usuarioContrIncorrecto.setVisible(true);
+				}
+			}
+		});
 		botonLogin.setForeground(new Color(0, 255, 0));
 		botonLogin.setFont(new Font("Verdana", Font.BOLD, 10));
 		panelBotonera.add(botonLogin);
@@ -208,7 +242,7 @@ public class VentanaLogin extends JFrame {
 	}
 	
 	private JLabel creaLabelUsuarioIncorrecto(JPanel panelLogin) {
-		JLabel usuarioContrIncorrecto = new JLabel("Usuario o contraseña incorrectos");
+		usuarioContrIncorrecto = new JLabel("Usuario o contraseña incorrectos");
 		usuarioContrIncorrecto.setVisible(false);
 		usuarioContrIncorrecto.setForeground(new Color(255, 0, 0));
 		usuarioContrIncorrecto.setFont(new Font("Verdana", Font.BOLD, 10));
@@ -274,6 +308,23 @@ public class VentanaLogin extends JFrame {
 			JPasswordField contrasenaFieldR, JLabel labelContrasenaVacia, JTextField textFieldEmailR,
 			JLabel labelEmailVacio, JCalendar calendario, JPanel panelBotoneraRegistro) {
 		JButton botonRegistrarse = new JButton("Registrarse");
+		botonRegistrarse.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//TODO:Extraer variables
+				String nombre = textFieldUsuarioR.getText();
+				String contrasena = contrasenaFieldR.getText();
+				String email = textFieldEmailR.getText();
+				
+				Date date = calendario.getDate();
+				SimpleDateFormat fechaFormato = new SimpleDateFormat("dd/MM/yyyy");
+				
+				String fechaNacimiento = fechaFormato.format(date);
+				
+				controladorAppMusic.registrarUsuario(nombre, contrasena, email, fechaNacimiento);
+				
+				//TODO:Cambio de pestalla y control de informacion validar
+			}
+		});
 		
 		botonRegistrarse.setForeground(new Color(0, 255, 0));
 		botonRegistrarse.setFont(new Font("Verdana", Font.BOLD, 10));

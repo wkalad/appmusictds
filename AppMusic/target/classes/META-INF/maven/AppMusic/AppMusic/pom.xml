@@ -24,6 +24,20 @@
 	    <version>5.5.13.4</version>
 	</dependency>
 
+	<dependency>
+	   <groupId>umu.tds</groupId>
+	   <artifactId>driverPersistencia</artifactId>
+	   <version>2.0</version>
+	</dependency>
+	
+	<!-- https://mvnrepository.com/artifact/com.jtattoo/JTattoo -->
+	<dependency>
+	    <groupId>com.jtattoo</groupId>
+	    <artifactId>JTattoo</artifactId>
+	    <version>1.6.13</version>
+	</dependency>
+
+	
   </dependencies>
   <build>
     <sourceDirectory>src</sourceDirectory>
