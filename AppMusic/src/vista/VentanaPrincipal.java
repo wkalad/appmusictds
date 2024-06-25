@@ -16,6 +16,7 @@ import java.awt.event.ActionListener;
 import javax.swing.AbstractListModel;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -42,11 +43,15 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 import controlador.ControladorAppMusic;
+import javafx.scene.control.ComboBox;
 import modelo.Cancion;
 import pulsador.Luz;
 import pulsador.IEncendidoListener;
 import java.util.EventObject;
+import java.util.LinkedList;
 import java.util.List;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ListSelectionEvent;
 
 public class VentanaPrincipal extends JFrame {
 
@@ -54,9 +59,13 @@ public class VentanaPrincipal extends JFrame {
 	private JTextField txtInterprete;
 	private JTextField txtTitulo;
 	private JTable table;
-	private JTextField textField;
+	private JTextField textNombrePlaylist;
 	private JTable table_1;
-	JScrollPane scrollPane; //Scroll para la tabla de canciones
+	private JTable tablaPlaylist;
+	private JScrollPane scrollPane; //Scroll para la tabla de canciones
+	private JButton botonPDF;
+	private JButton botonTopTen;
+	private DefaultListModel<String> listModel;
 	
 	//Controlador
 	private ControladorAppMusic controladorAppMusic = ControladorAppMusic.getUnicaInstancia();
@@ -64,13 +73,16 @@ public class VentanaPrincipal extends JFrame {
 	//
 	List<Cancion> cancionesBuscadas;
 	private static String[] NOMBRES_COLUMNAS = {"Titulo", "Interprete", "Estilo", "Favoritas"};
+	private static String[] NOMBRES_COLUMNAS2 = {"Titulo", "Interprete", "Estilo"};
 	//
 	private JPanel panelActual;
-	DefaultTableModel modelo;
+	private DefaultTableModel modelo;
+	private JComboBox comboBoxEstilo;
 	
 	/**
 	 * Launch the application.
 	 */
+	/*
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -83,12 +95,22 @@ public class VentanaPrincipal extends JFrame {
 			}
 		});
 	}
-
+	*/
 	/**
 	 * Create the frame.
 	 */
 	public VentanaPrincipal() {
 		initialize();
+	}
+	
+	private void mostrarFuncPremium() {		
+		if(controladorAppMusic.isPremium()) {
+			botonPDF.setVisible(true);
+			botonTopTen.setVisible(true);
+		}else {
+			botonPDF.setVisible(false);
+			botonTopTen.setVisible(false);
+		}
 	}
 	
 	private void initialize() {
@@ -126,18 +148,17 @@ public class VentanaPrincipal extends JFrame {
 		panel_4.setLayout(new BorderLayout());
 		
 		
+		listModel = new DefaultListModel<>();
+		JList<String> list = new JList<>(listModel);
 		
-		JList list = new JList();
-		list.setVisibleRowCount(6);
-		list.setModel(new AbstractListModel() {
-			String[] values = new String[] {"lista1", "lista2", "lista3", "lista1", "lista2", "lista3", "lista1", "lista2", "lista3", "lista1lista1", "lista2", "lista3", "lista1", "lista2", "lista3", "lista1", "lista2", "lista3", "lista1lista1", "lista2", "lista3", "lista1", "lista2", "lista3", "lista1", "lista2", "lista3", "lista1", "lista2", "lista3", "lista1", "lista2", "lista3"};
-			public int getSize() {
-				return values.length;
-			}
-			public Object getElementAt(int index) {
-				return values[index];
-			}
-		});
+		
+		List<String> playlists = controladorAppMusic.getPlaylists();
+		int j = 0;		
+		for(String p : playlists) {
+			listModel.add(j, p);
+			j++;
+		}
+		
 		JScrollPane scrollPane_1 = new JScrollPane(list);
 		scrollPane_1.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		panel_4.add(scrollPane_1, BorderLayout.CENTER);
@@ -177,40 +198,35 @@ public class VentanaPrincipal extends JFrame {
 		gbc_lblNewLabel.gridy = 0;
 		panelArriba.add(lblNewLabel, gbc_lblNewLabel);
 
-		JButton btnNewButton_4 = new JButton("Premium");
-		GridBagConstraints gbc_btnNewButton_4 = new GridBagConstraints();
-		gbc_btnNewButton_4.anchor = GridBagConstraints.NORTHWEST;
-		gbc_btnNewButton_4.insets = new Insets(0, 0, 0, 5);
-		gbc_btnNewButton_4.gridx = 4;
-		gbc_btnNewButton_4.gridy = 0;
-		panelArriba.add(btnNewButton_4, gbc_btnNewButton_4);
+		JButton botonPremium = new JButton("Premium");
 
-		JButton btnNewButton_5 = new JButton("logout");
-		GridBagConstraints gbc_btnNewButton_5 = new GridBagConstraints();
-		gbc_btnNewButton_5.insets = new Insets(0, 0, 0, 5);
-		gbc_btnNewButton_5.anchor = GridBagConstraints.NORTHWEST;
-		gbc_btnNewButton_5.gridx = 5;
-		gbc_btnNewButton_5.gridy = 0;
-		panelArriba.add(btnNewButton_5, gbc_btnNewButton_5);
-		
-		Luz luz = new Luz();
-		luz.addEncendidoListener(new IEncendidoListener() {
-			public void enteradoCambioEncendido(EventObject arg0) {
-				JFileChooser fileChooser = new JFileChooser();
-				fileChooser.setDialogTitle("Seleccione el archivo de las canciones");
-				
-				int resultado = fileChooser.showOpenDialog(frame);
-				
-				if(resultado == JFileChooser.APPROVE_OPTION) {
-					//TODO:Aqui y si el archivo no funciona? o es incorrecto
-					System.out.println(fileChooser.getSelectedFile().getPath());
-					String path = fileChooser.getSelectedFile().getPath();
-					controladorAppMusic.cargarCanciones(path);
-				}
-				
-				
+		GridBagConstraints gbc_botonPremium = new GridBagConstraints();
+		gbc_botonPremium.anchor = GridBagConstraints.NORTHWEST;
+		gbc_botonPremium.insets = new Insets(0, 0, 0, 5);
+		gbc_botonPremium.gridx = 4;
+		gbc_botonPremium.gridy = 0;
+		panelArriba.add(botonPremium, gbc_botonPremium);
+
+		JButton botonLogout = new JButton("logout");
+		botonLogout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				VentanaLogin ventanaLogin = new VentanaLogin();
+				//ventanaLogin.setVisible(true);
+				ventanaLogin.mostrarVentana();
+				frame.getContentPane().removeAll();
+				frame.getContentPane().revalidate();
+				frame.dispose();
 			}
 		});
+		GridBagConstraints gbc_botonLogout = new GridBagConstraints();
+		gbc_botonLogout.insets = new Insets(0, 0, 0, 5);
+		gbc_botonLogout.anchor = GridBagConstraints.NORTHWEST;
+		gbc_botonLogout.gridx = 5;
+		gbc_botonLogout.gridy = 0;
+		panelArriba.add(botonLogout, gbc_botonLogout);
+		
+		Luz luz = new Luz();
+		
 		GridBagConstraints gbc_luz = new GridBagConstraints();
 		gbc_luz.gridx = 6;
 		gbc_luz.gridy = 0;
@@ -272,8 +288,8 @@ public class VentanaPrincipal extends JFrame {
 		gbc_checkBoxFavoritas.gridy = 2;
 		panelBuscarNorte.add(checkBoxFavoritas, gbc_checkBoxFavoritas);
 		
-		JComboBox comboBoxEstilo = new JComboBox();
-		comboBoxEstilo.setModel(new DefaultComboBoxModel(new String[] {"Estilo", "Pop"}));
+		comboBoxEstilo = new JComboBox();
+		comboBoxEstilo.setModel(new DefaultComboBoxModel(new String[] {"Estilo"}));
 		comboBoxEstilo.setToolTipText("");
 		GridBagConstraints gbc_comboBoxEstilo = new GridBagConstraints();
 		gbc_comboBoxEstilo.insets = new Insets(0, 0, 5, 5);
@@ -319,7 +335,7 @@ public class VentanaPrincipal extends JFrame {
 		});*/
 		table = new JTable();
 		
-		Object[][] tabla = new Object[1][4];
+		Object[][] tabla = new Object[0][4];
 		modelo = new DefaultTableModel(tabla, NOMBRES_COLUMNAS);
 		table.setModel(modelo);
 		JScrollPane scrollPane = new JScrollPane(table);
@@ -340,29 +356,30 @@ public class VentanaPrincipal extends JFrame {
 		gbl_panelAñadirNorte.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panelAñadirNorte.setLayout(gbl_panelAñadirNorte);
 		
-		textField = new JTextField();
-		GridBagConstraints gbc_textField = new GridBagConstraints();
-		gbc_textField.gridwidth = 2;
-		gbc_textField.insets = new Insets(0, 0, 5, 5);
-		gbc_textField.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField.gridx = 1;
-		gbc_textField.gridy = 1;
-		panelAñadirNorte.add(textField, gbc_textField);
-		textField.setColumns(10);
+		textNombrePlaylist = new JTextField();
+		GridBagConstraints gbc_textNombrePlaylist = new GridBagConstraints();
+		gbc_textNombrePlaylist.gridwidth = 2;
+		gbc_textNombrePlaylist.insets = new Insets(0, 0, 5, 5);
+		gbc_textNombrePlaylist.fill = GridBagConstraints.HORIZONTAL;
+		gbc_textNombrePlaylist.gridx = 1;
+		gbc_textNombrePlaylist.gridy = 1;
+		panelAñadirNorte.add(textNombrePlaylist, gbc_textNombrePlaylist);
+		textNombrePlaylist.setColumns(10);
 		
-		JButton btnNewButton_13 = new JButton("Crear");
-		GridBagConstraints gbc_btnNewButton_13 = new GridBagConstraints();
-		gbc_btnNewButton_13.insets = new Insets(0, 0, 0, 5);
-		gbc_btnNewButton_13.gridx = 1;
-		gbc_btnNewButton_13.gridy = 2;
-		panelAñadirNorte.add(btnNewButton_13, gbc_btnNewButton_13);
+		JButton botonCrearPlaylist = new JButton("Crear");
 		
-		JButton btnNewButton_14 = new JButton("Eliminar");
-		GridBagConstraints gbc_btnNewButton_14 = new GridBagConstraints();
-		gbc_btnNewButton_14.insets = new Insets(0, 0, 0, 5);
-		gbc_btnNewButton_14.gridx = 2;
-		gbc_btnNewButton_14.gridy = 2;
-		panelAñadirNorte.add(btnNewButton_14, gbc_btnNewButton_14);
+		GridBagConstraints gbc_botonCrearPlaylist = new GridBagConstraints();
+		gbc_botonCrearPlaylist.insets = new Insets(0, 0, 0, 5);
+		gbc_botonCrearPlaylist.gridx = 1;
+		gbc_botonCrearPlaylist.gridy = 2;
+		panelAñadirNorte.add(botonCrearPlaylist, gbc_botonCrearPlaylist);
+		
+		JButton botonEliminarPlaylist = new JButton("Eliminar");
+		GridBagConstraints gbc_botonEliminarPlaylist = new GridBagConstraints();
+		gbc_botonEliminarPlaylist.insets = new Insets(0, 0, 0, 5);
+		gbc_botonEliminarPlaylist.gridx = 2;
+		gbc_botonEliminarPlaylist.gridy = 2;
+		panelAñadirNorte.add(botonEliminarPlaylist, gbc_botonEliminarPlaylist);
 		
 		
 		////TODO: Tiene que mostrar la misma tabla, por ahora asi.
@@ -374,9 +391,9 @@ public class VentanaPrincipal extends JFrame {
 		gbc_botonBuscar_1.gridy = 1;
 		GridBagLayout gbl_panelBoton = new GridBagLayout();
 		gbl_panelBoton.columnWidths = new int[]{117, 0};
-		gbl_panelBoton.rowHeights = new int[]{33, 37, 33, 33, 0};
+		gbl_panelBoton.rowHeights = new int[]{33, 37, 33, 0, 0, 33, 0};
 		gbl_panelBoton.columnWeights = new double[]{0.0, Double.MIN_VALUE};
-		gbl_panelBoton.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panelBoton.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panelBoton.setLayout(gbl_panelBoton);
 		
 		JButton botonBuscar = new JButton("Buscar");
@@ -406,11 +423,31 @@ public class VentanaPrincipal extends JFrame {
 		panelBoton.add(botonRecientes, gbc_botonRecientes);
 		
 		JButton botonMisPlaylists = new JButton("MisPlaylists");
+		
 		GridBagConstraints gbc_botonMisPlaylists = new GridBagConstraints();
+		gbc_botonMisPlaylists.insets = new Insets(0, 0, 5, 0);
 		gbc_botonMisPlaylists.fill = GridBagConstraints.HORIZONTAL;
 		gbc_botonMisPlaylists.gridx = 0;
 		gbc_botonMisPlaylists.gridy = 3;
 		panelBoton.add(botonMisPlaylists, gbc_botonMisPlaylists);
+		
+		botonTopTen = new JButton("TopTen");
+		GridBagConstraints gbc_botonTopTen = new GridBagConstraints();
+		gbc_botonTopTen.fill = GridBagConstraints.HORIZONTAL;
+		gbc_botonTopTen.insets = new Insets(0, 0, 5, 0);
+		gbc_botonTopTen.gridx = 0;
+		gbc_botonTopTen.gridy = 4;
+		panelBoton.add(botonTopTen, gbc_botonTopTen);
+		
+		botonPDF = new JButton("CreadorPDF");
+		GridBagConstraints gbc_botonPDF = new GridBagConstraints();
+		gbc_botonPDF.fill = GridBagConstraints.HORIZONTAL;
+		gbc_botonPDF.gridx = 0;
+		gbc_botonPDF.gridy = 5;
+		panelBoton.add(botonPDF, gbc_botonPDF);
+
+		mostrarFuncPremium();
+		
 		GridBagConstraints gbc_botonGestion_1 = new GridBagConstraints();
 		gbc_botonGestion_1.insets = new Insets(0, 0, 5, 0);
 		gbc_botonGestion_1.gridx = 0;
@@ -436,8 +473,8 @@ public class VentanaPrincipal extends JFrame {
 		panelCard.add(panelMisPlaylists, "panelMisPlaylists");
 		panelMisPlaylists.setLayout(new BorderLayout(0, 0));
 		
-		JPanel panel_8 = new JPanel();
-		panelMisPlaylists.add(panel_8, BorderLayout.CENTER);
+		JPanel panelTablaPlay = new JPanel();
+		panelMisPlaylists.add(panelTablaPlay, BorderLayout.CENTER);
 		
 		JPanel panelReproduccion = new JPanel();
 		panel.add(panelReproduccion, BorderLayout.SOUTH);
@@ -448,43 +485,46 @@ public class VentanaPrincipal extends JFrame {
 		gbl_panelReproduccion.rowWeights = new double[]{0.0};
 		panelReproduccion.setLayout(gbl_panelReproduccion);
 		
-		JButton btnNewButton = new JButton("");
-		btnNewButton.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/izquierda.png")));
-		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
-		gbc_btnNewButton.insets = new Insets(0, 0, 0, 5);
-		gbc_btnNewButton.gridx = 0;
-		gbc_btnNewButton.gridy = 0;
-		panelReproduccion.add(btnNewButton, gbc_btnNewButton);
+		JButton botonAtras = new JButton("");
+		botonAtras.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/izquierda.png")));
+		GridBagConstraints gbc_botonAtras = new GridBagConstraints();
+		gbc_botonAtras.insets = new Insets(0, 0, 0, 5);
+		gbc_botonAtras.gridx = 0;
+		gbc_botonAtras.gridy = 0;
+		panelReproduccion.add(botonAtras, gbc_botonAtras);
 		
-		JButton btnNewButton_1 = new JButton("");
-		btnNewButton_1.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/pausa.png")));
-		GridBagConstraints gbc_btnNewButton_1 = new GridBagConstraints();
-		gbc_btnNewButton_1.insets = new Insets(0, 0, 0, 5);
-		gbc_btnNewButton_1.gridx = 1;
-		gbc_btnNewButton_1.gridy = 0;
-		panelReproduccion.add(btnNewButton_1, gbc_btnNewButton_1);
+		JButton botonPausa = new JButton("");
+		botonPausa.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/pausa.png")));
+		GridBagConstraints gbc_botonPausa = new GridBagConstraints();
+		gbc_botonPausa.insets = new Insets(0, 0, 0, 5);
+		gbc_botonPausa.gridx = 1;
+		gbc_botonPausa.gridy = 0;
+		panelReproduccion.add(botonPausa, gbc_botonPausa);
 		
-		JButton btnNewButton_2 = new JButton("");
-		btnNewButton_2.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/boton-de-play.png")));
-		GridBagConstraints gbc_btnNewButton_2 = new GridBagConstraints();
-		gbc_btnNewButton_2.insets = new Insets(0, 0, 0, 5);
-		gbc_btnNewButton_2.gridx = 2;
-		gbc_btnNewButton_2.gridy = 0;
-		panelReproduccion.add(btnNewButton_2, gbc_btnNewButton_2);
+		JButton botonPlay = new JButton("");
 		
-		JButton btnNewButton_3 = new JButton("");
-		btnNewButton_3.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/chevron-derecho.png")));
-		GridBagConstraints gbc_btnNewButton_3 = new GridBagConstraints();
-		gbc_btnNewButton_3.insets = new Insets(0, 0, 0, 5);
-		gbc_btnNewButton_3.gridx = 3;
-		gbc_btnNewButton_3.gridy = 0;
-		panelReproduccion.add(btnNewButton_3, gbc_btnNewButton_3);
+		botonPlay.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/boton-de-play.png")));
+		GridBagConstraints gbc_botonPlay = new GridBagConstraints();
+		gbc_botonPlay.insets = new Insets(0, 0, 0, 5);
+		gbc_botonPlay.gridx = 2;
+		gbc_botonPlay.gridy = 0;
+		panelReproduccion.add(botonPlay, gbc_botonPlay);
 		
-		JButton btnNewButton_7 = new JButton("Añadir a Lista");
-		GridBagConstraints gbc_btnNewButton_7 = new GridBagConstraints();
-		gbc_btnNewButton_7.gridx = 8;
-		gbc_btnNewButton_7.gridy = 0;
-		panelReproduccion.add(btnNewButton_7, gbc_btnNewButton_7);
+		JButton botonSiguiente = new JButton("");
+		
+		botonSiguiente.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/chevron-derecho.png")));
+		GridBagConstraints gbc_botonSiguiente = new GridBagConstraints();
+		gbc_botonSiguiente.insets = new Insets(0, 0, 0, 5);
+		gbc_botonSiguiente.gridx = 3;
+		gbc_botonSiguiente.gridy = 0;
+		panelReproduccion.add(botonSiguiente, gbc_botonSiguiente);
+		
+		JButton botonAnadirLista = new JButton("Añadir a Lista");
+		
+		GridBagConstraints gbc_botonAnadirLista = new GridBagConstraints();
+		gbc_botonAnadirLista.gridx = 8;
+		gbc_botonAnadirLista.gridy = 0;
+		panelReproduccion.add(botonAnadirLista, gbc_botonAnadirLista);
 
 		JPanel panel_1 = new JPanel();
 		frame.getContentPane().add(panel_1, BorderLayout.NORTH);
@@ -505,6 +545,38 @@ public class VentanaPrincipal extends JFrame {
 
 		JPanel panel_2 = new JPanel();
 		frame.getContentPane().add(panel_2, BorderLayout.SOUTH);
+		
+		tablaPlaylist = new JTable();
+		Object[][] tablaP = new Object[0][3];
+		modelo = new DefaultTableModel(tablaP, NOMBRES_COLUMNAS2);
+		tablaPlaylist.setModel(modelo);
+		JScrollPane scrollPaneP = new JScrollPane(tablaPlaylist);
+		scrollPaneP.setPreferredSize(new Dimension(452, 150));
+		
+		panelTablaPlay.add(scrollPaneP);
+		
+		
+		luz.addEncendidoListener(new IEncendidoListener() {
+			public void enteradoCambioEncendido(EventObject arg0) {
+				JFileChooser fileChooser = new JFileChooser();
+				fileChooser.setDialogTitle("Seleccione el archivo de las canciones");
+				
+				int resultado = fileChooser.showOpenDialog(frame);
+				
+				if(resultado == JFileChooser.APPROVE_OPTION) {
+					//TODO:Aqui y si el archivo no funciona? o es incorrecto
+					System.out.println(fileChooser.getSelectedFile().getPath());
+					String path = fileChooser.getSelectedFile().getPath();
+					controladorAppMusic.cargarCanciones(path);
+					List<String> estilos = controladorAppMusic.getEstilos();
+					
+					estilos.stream()
+						   .forEach(e -> comboBoxEstilo.addItem(e));		
+				}
+				
+				
+			}
+		});
 		
 		botonBuscar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -563,6 +635,122 @@ public class VentanaPrincipal extends JFrame {
 				panelActual = panelGestionPlaylists;
 				
 				
+			}
+		});
+		
+		botonPremium.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String precio = String.valueOf(controladorAppMusic.getPrecioPremium());			
+				
+				VentanaPago ventanaPago = new VentanaPago(precio);
+				ventanaPago.setVisible(true);
+				
+				if(ventanaPago.isPagado()) {
+					controladorAppMusic.pagar();
+					botonPDF.setVisible(true);
+					botonTopTen.setVisible(true);
+				}
+			}
+		});
+		
+		
+		botonPlay.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int fila = table.getSelectedRow();
+				Object valor = table.getValueAt(fila, 0);
+				controladorAppMusic.reproducirCancion(valor.toString());
+			}
+		});
+		
+		botonSiguiente.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String titulo = controladorAppMusic.getCancionActual();
+				int i;
+				for(i = 0; i < table.getRowCount();i++) {
+					Object valor = table.getValueAt(i, 0);
+					if(valor != null && valor.toString().equalsIgnoreCase(titulo)) {
+						break;
+					}
+				}
+				
+				int filas = table.getRowCount();
+				int siguiente = (i + 1) % filas;
+				Object valor = table.getValueAt(siguiente, 0);
+				controladorAppMusic.reproducirCancion(valor.toString());
+			}
+		});
+		
+		
+		botonCrearPlaylist.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String nombre = textNombrePlaylist.getText();
+				
+				boolean creada = controladorAppMusic.crearPlaylist(nombre);
+				if(creada) {
+					int i = listModel.getSize();
+					listModel.add(i, nombre);
+				}
+			}
+		});
+		
+		botonAnadirLista.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				String lista = list.getSelectedValue();
+				
+				System.out.println("PLaulsit " +  lista);
+				
+				int[] lineas = table.getSelectedRows();
+				List<String> titulos = new LinkedList<>();
+				for(int i = 0; i < lineas.length; i++) {
+					Object valor = table.getValueAt(lineas[i], 0);
+					titulos.add(valor.toString());
+				}
+				
+				controladorAppMusic.anadirCancionPlaylist(lista, titulos);
+				
+			}
+		});
+		
+		botonMisPlaylists.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				panelActual.setVisible(false);
+				panelMisPlaylists.setVisible(true);
+				panelActual = panelMisPlaylists;
+				panelReproduccion.setVisible(true);
+				
+			}
+		});
+		
+		list.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				if(panelActual != panelMisPlaylists) {
+					
+					return;
+					
+				}
+				String nombre = list.getSelectedValue();
+				
+				System.out.println("PLaulsit " +  nombre);
+				
+				List<Cancion> canciones = controladorAppMusic.getCancionePlaylists(nombre);
+				
+				
+				Object[][] tabla = new Object[canciones.size()][3];
+				int i = 0;
+				for(Cancion c:canciones) {
+					tabla[i][0] = c.getTitulo();
+					tabla[i][1] = c.getInterprete();
+					tabla[i][2] = c.getEstilo();
+					System.out.println("tit " +  c.getTitulo());
+					
+					i++;
+				}
+				modelo = new DefaultTableModel(tabla, NOMBRES_COLUMNAS2);
+				tablaPlaylist.setModel(modelo);
+				tablaPlaylist.setSelectionBackground(new Color(0, 128, 0));
+				tablaPlaylist.setVisible(true);
 			}
 		});
 	}

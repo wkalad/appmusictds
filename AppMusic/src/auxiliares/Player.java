@@ -11,29 +11,28 @@ public class Player {
 
 	private Cancion cancionActual = null;
 	private MediaPlayer mediaPlayer;
+	
 	public Player() {
 		com.sun.javafx.application.PlatformImpl.startup(()->{});
 	}
 	
 	
-	public void play(String accion, Cancion cancion) {
-		switch (accion) {
-		case "play":
-			setCancionActual(cancion);
-			mediaPlayer.play();
-			break;
-		case "stop":
-			mediaPlayer.stop();
-			break;
-		case "pause":
-			mediaPlayer.pause();
-			break;
-		}
+	public void play(Cancion cancion) {
+		setCancionActual(cancion);
+		mediaPlayer.play();
+	}
+	
+	public void pause() {
+		mediaPlayer.pause();
+	}
+	
+	public void stop() {
+		mediaPlayer.stop();
 	}
 	
 	public void setCancionActual(Cancion cancion) {
 		URL uri = null;
-		if(cancion != cancionActual) {
+		if(cancion != cancionActual || cancionActual == null) {
 			cancionActual = cancion;
 			
 			try {
@@ -45,5 +44,9 @@ public class Player {
 			Media media = new Media(uri.toString());
 			mediaPlayer = new MediaPlayer(media);
 		}
+	}
+	
+	public boolean isRepro() {
+		return cancionActual != null;
 	}
 }

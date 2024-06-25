@@ -15,7 +15,7 @@ public class BuscadorInterprete extends BuscadorDecorator{
 	@Override
 	public List<Cancion> buscarCancion() {
 		return super.buscarCancion().stream()
-									.filter(c -> c.getInterprete().contains(interprete))
+									.filter(c -> c.getInterprete().toLowerCase().contains(interprete.toLowerCase()))
 									.toList();
 	}
 	

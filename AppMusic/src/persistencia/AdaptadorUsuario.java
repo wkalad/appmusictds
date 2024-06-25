@@ -108,8 +108,11 @@ public class AdaptadorUsuario implements IAdaptadorUsuario {
 		usuario.setPremium(premium);
 		usuario.setId(id);
 		//TODO DESCUENTO PONER
-		usuario.getPlaylists().addAll(playlists);
-		usuario.getRecientes().addAll(recientes);
+		//usuario.getPlaylists().addAll(playlists);
+		//usuario.getRecientes().addAll(recientes);
+		
+		usuario.setPlaylist(playlists);
+		usuario.setRecientes(recientes);
 		
 		return usuario;
 		

@@ -1,5 +1,11 @@
 package modelo;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,6 +37,7 @@ public class Usuario {
 			playlists=new HashSet<>();
 			recientes=new LinkedList<>();
 			//descuento=null;
+			
 		}
 		
 //		public Usuario(String nombre, String password, Descuento descuento) {
@@ -70,21 +77,29 @@ public class Usuario {
 		public List<Cancion> getRecientes(){
 			return new LinkedList<Cancion>(recientes);
 		}
-		//Preguntar Al profesor
+
 		public Descuento getDescuento() {
 			return descuento;
 		}
 		
-		public String getTipoDescuento() {
-			if (descuento != null)
-				return descuento.getTipoDescuento();
+		public double getPrecioDescuento(double precio) {
 			
-			return "";
-		}
-		
-		public double descuentoAplicado(double precio) {
-			double pago = precio - descuento.calcularDescuento(precio);
-			return pago;
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+			LocalDate fecha = LocalDate.parse(fechaNacimiento, formatter);
+			
+			Period period = Period.between(fecha, LocalDate.now());
+	        int diferencia = period.getYears();
+			
+			if(diferencia < 20) {
+				descuento = new DescuentoJovenes();
+				
+			}else if (diferencia > 50){
+				descuento = new DescuentoTerceraEdad();
+			}else {
+				return precio;
+			}
+			
+			return descuento.calcularDescuento(precio);
 		}
 
 		public void realizarPago() {
@@ -102,6 +117,14 @@ public class Usuario {
 		
 		public void setDescuento(Descuento descuento) {
 			this.descuento = descuento;
+		}
+		
+		public void setPlaylist(Set<Playlist> playlists) {
+			this.playlists = playlists;
+		}
+		
+		public void setRecientes(List<Cancion> canciones) {
+			recientes = canciones;
 		}
 		
 		public void addPlaylist(Playlist playlist) {

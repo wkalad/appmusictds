@@ -24,6 +24,8 @@ import persistencia.IAdaptadorUsuario;
 public class ControladorAppMusic implements CancionesListener{
 
 	
+	private static double PRECIO = 20;
+	
 	private static ControladorAppMusic unicaInstancia;
 	
 	private IAdaptadorUsuario adaptadorUsuario;
@@ -36,6 +38,7 @@ public class ControladorAppMusic implements CancionesListener{
 	private CargadorCanciones cargadorCanciones;
 	
 	private Usuario usuarioActual;//TODO Ver esto bien 
+	private Cancion cancionActual = null;
 	
 	//TODO: donde deberia ir el player e instanciarse?
 	private Player player;
@@ -86,6 +89,7 @@ public class ControladorAppMusic implements CancionesListener{
 			if (github.isCredentialValid()) {
 				GHUser ghuser = github.getMyself();
 				//TODO UsuarioActual  que pasa con eso?
+				usuarioActual = new Usuario(nombre, "contrasena", ghuser.getEmail(), "27/06/1997");
 				return (ghuser.getLogin().equals(nombre) && github.isCredentialValid());
 			}
 			return false;
@@ -94,6 +98,12 @@ public class ControladorAppMusic implements CancionesListener{
 			e.printStackTrace();
 		}
 		return false;
+	}
+	
+	//TODO: Cierre de sesion
+	public boolean cerrarSesion() {
+		usuarioActual = null;
+		return true;
 	}
 	
 	public List<Cancion> buscarCancion(String titulo, String interprete, String estilo, boolean favorita){
@@ -126,10 +136,19 @@ public class ControladorAppMusic implements CancionesListener{
 	
 	public boolean pagar() {
 		usuarioActual.setPremium(true);
+		adaptadorUsuario.modificarUsuario(usuarioActual);
 		return true;
 	}
 	
-	public Playlist crearPlaylist(String nombre, List<Cancion> canciones) {
+	public double getPrecioPremium() {
+		return usuarioActual.getPrecioDescuento(PRECIO);
+	}
+	
+	public boolean isPremium() {
+		return usuarioActual.isPremium();
+	}
+	
+	public boolean crearPlaylist(String nombre) {
 		
 		Playlist playlist = usuarioActual.getPlaylists().stream()
 														.filter(p -> p.getNombre().contains(nombre))
@@ -142,12 +161,15 @@ public class ControladorAppMusic implements CancionesListener{
 		//No existe por lo tanto se pude crear
 		if(playlist == null) {
 			playlist = new Playlist(nombre);
-			playlist.setPlaylist(canciones);
+			//playlist.setPlaylist(canciones);
 			//Guardar en persistencia
+			usuarioActual.addPlaylist(playlist);
 			adaptadorPlaylist.crearPlaylist(playlist);
+			adaptadorUsuario.modificarUsuario(usuarioActual);
+			return true;
 		}
-		
-		return playlist;
+		//TODO no se devuelve
+		return false;
 		
 	}
 	//TODO como se eliminan las playlist
@@ -165,15 +187,21 @@ public class ControladorAppMusic implements CancionesListener{
 		
 	}
 	
-	public void anadirCancionPlaylist(String nombre, List<Cancion> canciones) {
+	public void anadirCancionPlaylist(String nombre, List<String> titulos) {
 		
 		Playlist playlist = usuarioActual.getPlaylists().stream()
 														.filter(p -> p.getNombre().contains(nombre))
 														.findFirst()
 														.orElse(null);
 		
-		canciones.stream()
-		 		 .forEach(c -> playlist.addCancion(c));
+		
+		if(playlist == null) {
+			return ;
+		}
+		for(String titulo : titulos) {
+			Cancion cancion = catalogoCanciones.getCancion(titulo);
+			playlist.addCancion(cancion);
+		}
 		
 		adaptadorPlaylist.modificarPlaylist(playlist);
 		
@@ -205,6 +233,11 @@ public class ControladorAppMusic implements CancionesListener{
 		cargadorCanciones.setArchivoCanciones(nuevoArchivoCanciones);
 	}
 
+	public List<String> getEstilos(){
+		return catalogoCanciones.getCanciones().stream()
+											   .map(c -> c.getEstilo())
+											   .toList();
+	}
 
 	private void inicializarAdaptadores() {
 		FactoriaDAO factoria = null;
@@ -250,5 +283,42 @@ public class ControladorAppMusic implements CancionesListener{
 	public String getUsuarioActual() {
 		return usuarioActual.getNombre();
 	}
+	
+	public String getCancionActual() {
+		return cancionActual.getTitulo();
+	}
 
+	
+	public List<String> getPlaylists(){
+		return usuarioActual.getPlaylists().stream()
+										 .map(p -> p.getNombre())
+										 .toList();
+	}
+	
+	public List<Cancion> getCancionePlaylists(String nombre){
+		return usuarioActual.getPlaylists().stream().filter(p -> p.getNombre().equals(nombre)).flatMap(p -> p.getCanciones().stream()).toList();
+	}
+	
+	
+	public void reproducirCancion(String titulo) {
+		Cancion cancion = catalogoCanciones.getCancion(titulo);
+		//TODO:BOPRRAR
+		cancionActual = cancion;
+		System.out.println(cancion.getTitulo());
+		if(player.isRepro()) {
+			player.stop();
+		}
+		player.play(cancion);
+	}
+	
+	public void pausarCancion() {
+		player.pause();
+	}
+	
+	public void pararCancion() {
+		player.stop();
+	}
+	
+	
+	
 }

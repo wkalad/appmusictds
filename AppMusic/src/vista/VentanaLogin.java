@@ -12,6 +12,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -19,6 +20,7 @@ import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.border.SoftBevelBorder;
+import javax.swing.filechooser.FileFilter;
 
 import com.toedter.calendar.JCalendar;
 
@@ -41,6 +43,7 @@ public class VentanaLogin extends JFrame {
 	/**
 	 * Launch the application.
 	 */
+/*
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -53,7 +56,7 @@ public class VentanaLogin extends JFrame {
 			}
 		});
 	}
-
+*/
 	/**
 	 * Create the frame.
 	 */
@@ -71,6 +74,9 @@ public class VentanaLogin extends JFrame {
 		frame.setVisible(true);
 	}
 	
+	public void cerrarVentana() {
+		frame.dispose();
+	}
 	private void inicializarJFrame() {
 		try {
 			UIManager.setLookAndFeel("com.jtattoo.plaf.hifi.HiFiLookAndFeel");
@@ -85,6 +91,7 @@ public class VentanaLogin extends JFrame {
 		frame.setResizable(false);
 		frame.setBounds(100, 100, 789, 511);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
 	}
 	
 	private JPanel creaPanelVentana() {
@@ -228,8 +235,11 @@ public class VentanaLogin extends JFrame {
 				if(validacion) {
 					//TODO: Verificar
 					VentanaPrincipal ventanaPrincipal = new VentanaPrincipal();
-					ventanaPrincipal.setVisible(true);
+					//ventanaPrincipal.setVisible(true);
+					frame.getContentPane().removeAll();
+					frame.getContentPane().revalidate();
 					frame.dispose();
+					//cerrarVentana();
 				}else {
 					usuarioContrIncorrecto.setVisible(true);
 				}
@@ -257,6 +267,42 @@ public class VentanaLogin extends JFrame {
 	
 	private JButton crearBotonLoginGitHub(JPanel panelBotonera) {
 		JButton botonLoginGitHub = new JButton("Login con GitHub");
+		botonLoginGitHub.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fileChooser = new JFileChooser();
+				fileChooser.setDialogTitle("Seleccione archivo github.properties");
+				fileChooser.addChoosableFileFilter(new FileFilter() {
+					public String getDescription() {
+						return "GitHub Properties File (*.properties)";
+					}
+
+					public boolean accept(File f) {
+						if (f.isDirectory()) {
+							return true;
+						} else {
+							return f.getName().toLowerCase().endsWith(".properties");
+						}
+					}
+				});
+				fileChooser.setAcceptAllFileFilterUsed(false);
+				File workingDirectory = new File(System.getProperty("user.dir"));
+				fileChooser.setCurrentDirectory(workingDirectory);
+				int result = fileChooser.showOpenDialog(frame);
+				
+				if (result == JFileChooser.APPROVE_OPTION) {
+					File selectedFile = fileChooser.getSelectedFile();
+					String nombre  = textFieldUsuarioL.getText();
+					boolean verificar = controladorAppMusic.iniciarSesionGithub(nombre, selectedFile.getAbsolutePath());
+					if(verificar) {
+						VentanaPrincipal ventanaPrincipal = new VentanaPrincipal();
+						//ventanaPrincipal.setVisible(true);
+						frame.dispose();
+					}else {
+						usuarioContrIncorrecto.setVisible(true);
+					}
+				}
+			}
+		});
 		botonLoginGitHub.setForeground(new Color(0, 255, 0));
 		botonLoginGitHub.setFont(new Font("Verdana", Font.BOLD, 10));
 		panelBotonera.add(botonLoginGitHub);
