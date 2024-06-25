@@ -10,6 +10,7 @@ import org.kohsuke.github.GHUser;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
 
+import auxiliares.Player;
 import cargador.CancionesEvent;
 import cargador.CancionesListener;
 import cargador.CargadorCanciones;
@@ -36,6 +37,8 @@ public class ControladorAppMusic implements CancionesListener{
 	
 	private Usuario usuarioActual;//TODO Ver esto bien 
 	
+	//TODO: donde deberia ir el player e instanciarse?
+	private Player player;
 	
 	public static ControladorAppMusic getUnicaInstancia() {
 		
@@ -50,6 +53,7 @@ public class ControladorAppMusic implements CancionesListener{
 		inicializarCatalogos();
 		cargadorCanciones = new CargadorCanciones();
 		cargadorCanciones.addCancionesListener(this);
+		player = new Player();
 	}
 	
 	
@@ -197,9 +201,7 @@ public class ControladorAppMusic implements CancionesListener{
 
 
 	public void cargarCanciones(String nuevoArchivoCanciones) {		
-		
 		cargadorCanciones.setArchivoCanciones(nuevoArchivoCanciones);
-		
 	}
 
 
@@ -226,7 +228,7 @@ public class ControladorAppMusic implements CancionesListener{
 	@Override
 	public void nuevasCanciones(CancionesEvent cEvent) {
 		
-		List<Cancion> canciones = cEvent.getNuevasCanciones().getCanciones().stream()
+		List<Cancion> canciones = cEvent.getNuevasCanciones().getCancion().stream()
 										.map(cc -> new Cancion(cc.getTitulo(), cc.getURL(), cc.getEstilo(), cc.getInterprete()))
 										.toList();
 		
@@ -235,6 +237,11 @@ public class ControladorAppMusic implements CancionesListener{
 					 			adaptadorCancion.crearCancion(c);
 					 			catalogoCanciones.addCancion(c);
 				 			   });
+		/*
+		for(Cancion c : catalogoCanciones.getCanciones()) {
+			System.out.println(c.getTitulo());
+		}
+		*/
 		
 	}
 	

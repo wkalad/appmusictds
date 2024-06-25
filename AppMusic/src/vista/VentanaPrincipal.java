@@ -20,6 +20,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -42,6 +43,8 @@ import javax.swing.table.DefaultTableModel;
 
 import controlador.ControladorAppMusic;
 import pulsador.Luz;
+import pulsador.IEncendidoListener;
+import java.util.EventObject;
 
 public class VentanaPrincipal extends JFrame {
 
@@ -52,9 +55,8 @@ public class VentanaPrincipal extends JFrame {
 	private JTextField textField;
 	private JTable table_1;
 	
-	//Controlador
-	ControladorAppMusic controladorAppMusic = ControladorAppMusic.getUnicaInstancia();
 	
+	private ControladorAppMusic controladorAppMusic = ControladorAppMusic.getUnicaInstancia();
 	
 	/**
 	 * Launch the application.
@@ -156,7 +158,7 @@ public class VentanaPrincipal extends JFrame {
 		gbl_panel_3.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
 		panel_3.setLayout(gbl_panel_3);
 
-		JLabel lblNewLabel = new JLabel("Bienvenido, " + controladorAppMusic.getUsuarioActual());
+		JLabel lblNewLabel = new JLabel("Bienvenido " + controladorAppMusic.getUsuarioActual());
 		lblNewLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
 		gbc_lblNewLabel.gridwidth = 4;
@@ -183,6 +185,23 @@ public class VentanaPrincipal extends JFrame {
 		panel_3.add(btnNewButton_5, gbc_btnNewButton_5);
 		
 		Luz luz = new Luz();
+		luz.addEncendidoListener(new IEncendidoListener() {
+			public void enteradoCambioEncendido(EventObject arg0) {
+				JFileChooser fileChooser = new JFileChooser();
+				fileChooser.setDialogTitle("Seleccione el archivo de las canciones");
+				
+				int resultado = fileChooser.showOpenDialog(frame);
+				
+				if(resultado == JFileChooser.APPROVE_OPTION) {
+					//TODO:Aqui
+					System.out.println(fileChooser.getSelectedFile().getPath());
+					String path = fileChooser.getSelectedFile().getPath();
+					controladorAppMusic.cargarCanciones(path);
+				}
+				
+				
+			}
+		});
 		GridBagConstraints gbc_luz = new GridBagConstraints();
 		gbc_luz.gridx = 6;
 		gbc_luz.gridy = 0;
