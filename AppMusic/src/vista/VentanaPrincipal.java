@@ -50,8 +50,11 @@ import pulsador.IEncendidoListener;
 import java.util.EventObject;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Vector;
+
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
+import java.awt.Font;
 
 public class VentanaPrincipal extends JFrame {
 
@@ -62,6 +65,8 @@ public class VentanaPrincipal extends JFrame {
 	private JTextField textNombrePlaylist;
 	private JTable table_1;
 	private JTable tablaPlaylist;
+	private JTable tablaRecientes;
+	private JTable tablaTopTen;
 	private JScrollPane scrollPane; //Scroll para la tabla de canciones
 	private JButton botonPDF;
 	private JButton botonTopTen;
@@ -74,6 +79,7 @@ public class VentanaPrincipal extends JFrame {
 	List<Cancion> cancionesBuscadas;
 	private static String[] NOMBRES_COLUMNAS = {"Titulo", "Interprete", "Estilo", "Favoritas"};
 	private static String[] NOMBRES_COLUMNAS2 = {"Titulo", "Interprete", "Estilo"};
+	private static String[] NOMBRES_COLUMNAS3 = {"Titulo", "Interprete", "Estilo", "Num Reproducciones"};
 	//
 	private JPanel panelActual;
 	private DefaultTableModel modelo;
@@ -415,6 +421,7 @@ public class VentanaPrincipal extends JFrame {
 		panelBoton.add(botonGestionPlaylist, gbc_botonGestionPlaylist);
 		
 		JButton botonRecientes = new JButton("Recientes");
+		
 		GridBagConstraints gbc_botonRecientes = new GridBagConstraints();
 		gbc_botonRecientes.fill = GridBagConstraints.HORIZONTAL;
 		gbc_botonRecientes.insets = new Insets(0, 0, 5, 0);
@@ -432,6 +439,7 @@ public class VentanaPrincipal extends JFrame {
 		panelBoton.add(botonMisPlaylists, gbc_botonMisPlaylists);
 		
 		botonTopTen = new JButton("TopTen");
+		
 		GridBagConstraints gbc_botonTopTen = new GridBagConstraints();
 		gbc_botonTopTen.fill = GridBagConstraints.HORIZONTAL;
 		gbc_botonTopTen.insets = new Insets(0, 0, 5, 0);
@@ -466,8 +474,8 @@ public class VentanaPrincipal extends JFrame {
 		panelCard.add(panelRecientes, "panelRecientes");
 		panelRecientes.setLayout(new BorderLayout(0, 0));
 		
-		JPanel panel_6 = new JPanel();
-		panelRecientes.add(panel_6, BorderLayout.CENTER);
+		JPanel panelTablaRecientes = new JPanel();
+		panelRecientes.add(panelTablaRecientes, BorderLayout.CENTER);
 
 		JPanel panelMisPlaylists = new JPanel();
 		panelCard.add(panelMisPlaylists, "panelMisPlaylists");
@@ -486,6 +494,7 @@ public class VentanaPrincipal extends JFrame {
 		panelReproduccion.setLayout(gbl_panelReproduccion);
 		
 		JButton botonAtras = new JButton("");
+		
 		botonAtras.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/izquierda.png")));
 		GridBagConstraints gbc_botonAtras = new GridBagConstraints();
 		gbc_botonAtras.insets = new Insets(0, 0, 0, 5);
@@ -494,6 +503,7 @@ public class VentanaPrincipal extends JFrame {
 		panelReproduccion.add(botonAtras, gbc_botonAtras);
 		
 		JButton botonPausa = new JButton("");
+		
 		botonPausa.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/pausa.png")));
 		GridBagConstraints gbc_botonPausa = new GridBagConstraints();
 		gbc_botonPausa.insets = new Insets(0, 0, 0, 5);
@@ -556,6 +566,46 @@ public class VentanaPrincipal extends JFrame {
 		panelTablaPlay.add(scrollPaneP);
 		
 		
+		
+		tablaRecientes = new JTable();
+		Object[][] tablaR = new Object[0][3];
+		modelo = new DefaultTableModel(tablaR, NOMBRES_COLUMNAS2);
+		tablaRecientes.setModel(modelo);
+		JScrollPane scrollPaneR = new JScrollPane(tablaRecientes);
+		scrollPaneR.setPreferredSize(new Dimension(452, 150));
+		
+		panelTablaRecientes.add(scrollPaneR);
+		
+		JPanel panelTopTen = new JPanel();
+		panelCard.add(panelTopTen, "name_90058731106300");
+		
+		JPanel panelPDF = new JPanel();
+		panelCard.add(panelPDF, "name_90071555260300");
+		GridBagLayout gbl_panelPDF = new GridBagLayout();
+		gbl_panelPDF.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gbl_panelPDF.rowHeights = new int[]{0, 0, 0, 0, 0};
+		gbl_panelPDF.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panelPDF.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		panelPDF.setLayout(gbl_panelPDF);
+		
+		JButton btnNewButton = new JButton("Generar PDF");
+		btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
+		gbc_btnNewButton.gridx = 8;
+		gbc_btnNewButton.gridy = 3;
+		panelPDF.add(btnNewButton, gbc_btnNewButton);
+		
+		
+		tablaTopTen = new JTable();
+		Object[][] tablaT = new Object[0][4];
+		modelo = new DefaultTableModel(tablaT, NOMBRES_COLUMNAS3);
+		tablaTopTen.setModel(modelo);
+		JScrollPane scrollPaneT = new JScrollPane(tablaTopTen);
+		scrollPaneT.setPreferredSize(new Dimension(452, 150));
+		
+		panelTopTen.add(scrollPaneT);
+		
+		
 		luz.addEncendidoListener(new IEncendidoListener() {
 			public void enteradoCambioEncendido(EventObject arg0) {
 				JFileChooser fileChooser = new JFileChooser();
@@ -580,6 +630,8 @@ public class VentanaPrincipal extends JFrame {
 		
 		botonBuscar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				botonAnadirLista.setVisible(true);
+				botonAnadirLista.setText("Añadir a Lista");
 				panelActual.setVisible(false);
 				panelBuscar.setVisible(true);
 				panelActual = panelBuscar;
@@ -628,8 +680,7 @@ public class VentanaPrincipal extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				panelReproduccion.setVisible(true);
 				
-				
-				
+				botonAnadirLista.setVisible(false);
 				panelActual.setVisible(false);
 				panelGestionPlaylists.setVisible(true);
 				panelActual = panelGestionPlaylists;
@@ -656,9 +707,28 @@ public class VentanaPrincipal extends JFrame {
 		
 		botonPlay.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int fila = table.getSelectedRow();
-				Object valor = table.getValueAt(fila, 0);
+				Object valor = null;
+				if(panelActual == panelBuscar) {
+					int fila = table.getSelectedRow();
+					valor = table.getValueAt(fila, 0);
+				}else if(panelActual == panelMisPlaylists) {
+					int fila = tablaPlaylist.getSelectedRow();
+					valor = tablaPlaylist.getValueAt(fila, 0);
+				}else if(panelActual == panelRecientes) {
+					int fila = tablaRecientes.getSelectedRow();
+					valor = tablaRecientes.getValueAt(fila, 0);
+				}
+				
 				controladorAppMusic.reproducirCancion(valor.toString());
+				
+				
+			}
+		});
+		
+		botonPausa.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controladorAppMusic.pausarCancion();
+			
 			}
 		});
 		
@@ -680,6 +750,26 @@ public class VentanaPrincipal extends JFrame {
 			}
 		});
 		
+		botonAtras.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String titulo = controladorAppMusic.getCancionActual();
+				int i;
+				for(i = 0; i < table.getRowCount();i++) {
+					Object valor = table.getValueAt(i, 0);
+					if(valor != null && valor.toString().equalsIgnoreCase(titulo)) {
+						break;
+					}
+				}
+				
+				int filas = table.getRowCount();
+				if(i == 0)
+					i = filas;
+				int siguiente = (i - 1) % filas;
+				Object valor = table.getValueAt(siguiente, 0);
+				controladorAppMusic.reproducirCancion(valor.toString());
+			}
+		});
+		
 		
 		botonCrearPlaylist.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -696,18 +786,37 @@ public class VentanaPrincipal extends JFrame {
 		botonAnadirLista.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				String lista = list.getSelectedValue();
-				
-				System.out.println("PLaulsit " +  lista);
-				
-				int[] lineas = table.getSelectedRows();
-				List<String> titulos = new LinkedList<>();
-				for(int i = 0; i < lineas.length; i++) {
-					Object valor = table.getValueAt(lineas[i], 0);
-					titulos.add(valor.toString());
+				if(panelActual == panelBuscar) {
+					String lista = list.getSelectedValue();
+					
+					//System.out.println("PLaulsit " +  lista);
+					
+					int[] lineas = table.getSelectedRows();
+					List<String> titulos = new LinkedList<>();
+					for(int i = 0; i < lineas.length; i++) {
+						Object valor = table.getValueAt(lineas[i], 0);
+						titulos.add(valor.toString());
+					}
+					
+					controladorAppMusic.anadirCancionPlaylist(lista, titulos);
+					
+				}else if(panelActual == panelMisPlaylists) {
+					
+					String lista = list.getSelectedValue();
+					int[] lineas = tablaPlaylist.getSelectedRows();
+					
+					List<String> titulos = new LinkedList<>();
+					for(int i = 0; i < lineas.length; i++) {
+						Object valor = tablaPlaylist.getValueAt(lineas[i], 0);
+						titulos.add(valor.toString());
+						DefaultTableModel model = (DefaultTableModel)tablaPlaylist.getModel();
+						model.removeRow(lineas[i]);
+					}
+					
+					controladorAppMusic.eliminarCancionPlaylist(lista, titulos);
+					
 				}
 				
-				controladorAppMusic.anadirCancionPlaylist(lista, titulos);
 				
 			}
 		});
@@ -715,6 +824,8 @@ public class VentanaPrincipal extends JFrame {
 		botonMisPlaylists.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+				botonAnadirLista.setVisible(true);
+				botonAnadirLista.setText("Eliminar de la Lista");
 				panelActual.setVisible(false);
 				panelMisPlaylists.setVisible(true);
 				panelActual = panelMisPlaylists;
@@ -743,7 +854,6 @@ public class VentanaPrincipal extends JFrame {
 					tabla[i][0] = c.getTitulo();
 					tabla[i][1] = c.getInterprete();
 					tabla[i][2] = c.getEstilo();
-					System.out.println("tit " +  c.getTitulo());
 					
 					i++;
 				}
@@ -751,6 +861,65 @@ public class VentanaPrincipal extends JFrame {
 				tablaPlaylist.setModel(modelo);
 				tablaPlaylist.setSelectionBackground(new Color(0, 128, 0));
 				tablaPlaylist.setVisible(true);
+			}
+		});
+		
+		
+		botonRecientes.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				List<Cancion> canciones = controladorAppMusic.getCancionesRecientes();
+				
+				botonAnadirLista.setVisible(false);
+				
+				Object[][] tabla = new Object[canciones.size()][3];
+				int i = 0;
+				for(Cancion c:canciones) {
+					tabla[i][0] = c.getTitulo();
+					tabla[i][1] = c.getInterprete();
+					tabla[i][2] = c.getEstilo();
+					System.out.println("tit " +  c.getTitulo());
+					
+					i++;
+				}
+				modelo = new DefaultTableModel(tabla, NOMBRES_COLUMNAS2);
+				tablaRecientes.setModel(modelo);
+				tablaRecientes.setSelectionBackground(new Color(0, 128, 0));
+				tablaRecientes.setVisible(true);
+				
+				panelActual.setVisible(false);
+				panelRecientes.setVisible(true);
+				panelActual = panelRecientes;
+				panelReproduccion.setVisible(true);
+
+			}
+		});
+		
+		botonTopTen.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				List<Cancion> canciones = controladorAppMusic.getTopTen();
+				
+				
+				Object[][] tabla = new Object[canciones.size()][4];
+				int i = 0;
+				for(Cancion c:canciones) {
+					tabla[i][0] = c.getTitulo();
+					tabla[i][1] = c.getInterprete();
+					tabla[i][2] = c.getEstilo();
+					tabla[i][3] = c.getNumReproducciones();
+					
+					i++;
+				}
+				modelo = new DefaultTableModel(tabla, NOMBRES_COLUMNAS3);
+				tablaTopTen.setModel(modelo);
+				tablaTopTen.setSelectionBackground(new Color(0, 128, 0));
+				tablaTopTen.setVisible(true);
+				
+				panelActual.setVisible(false);
+				panelTopTen.setVisible(true);
+				panelActual = panelTopTen;
+				panelReproduccion.setVisible(true);
+
 			}
 		});
 	}

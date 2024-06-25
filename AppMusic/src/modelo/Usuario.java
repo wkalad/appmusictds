@@ -18,7 +18,7 @@ public class Usuario {
 		private boolean premium;
 		private int id;
 		private String email;
-
+		private static int MAXSIZE = 3;
 		
 		// ATRIBUTOS QUE CONTIENEN CLASES
 		private String fechaNacimiento;
@@ -132,6 +132,10 @@ public class Usuario {
 		}
 		
 		public void addCancionReciente(Cancion cancion) {
-			recientes.add(cancion);
+			//recientes.add(cancion);
+			recientes.add(0, cancion);
+			if(recientes.size() > MAXSIZE) {
+				recientes.remove(MAXSIZE);
+			}
 		}
 }

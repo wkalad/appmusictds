@@ -62,4 +62,16 @@ public class Cancion {
 	public void setNumReproducciones(int numReproducciones) {
 		this.numReproducciones=numReproducciones;
 	}
+	
+	public void addReproduccion() {
+		numReproducciones = numReproducciones + 1;
+	}
+	
+  public boolean equals(Object obj) {
+	  Cancion cancion = (Cancion) obj;
+	  if(this.getTitulo().equals(cancion.getTitulo())) {
+		  return true;
+	  }
+	  return false;       
+  }
 }

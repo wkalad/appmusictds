@@ -73,7 +73,7 @@ public class AdaptadorPlaylist implements IAdaptadorPlaylist{
 		
 		Playlist playlist = new Playlist(nombre);
 		playlist.setId(id);
-		playlist.getCanciones().addAll(canciones);
+		playlist.setPlaylist(canciones);;
 		
 		return playlist;		
 	}
@@ -116,7 +116,6 @@ public class AdaptadorPlaylist implements IAdaptadorPlaylist{
 		
 	}
 	
-	// TODO Mismo codigo que otra parte, merece la pena ponerlo de otra forma?
 	
 	private String obtenerIdCanciones(List<Cancion> canciones) {
 		return canciones.stream()

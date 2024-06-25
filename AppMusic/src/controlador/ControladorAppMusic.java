@@ -151,7 +151,7 @@ public class ControladorAppMusic implements CancionesListener{
 	public boolean crearPlaylist(String nombre) {
 		
 		Playlist playlist = usuarioActual.getPlaylists().stream()
-														.filter(p -> p.getNombre().contains(nombre))
+														.filter(p -> p.getNombre().equals(nombre))
 														.findFirst()
 														.orElse(null);
 		
@@ -173,15 +173,24 @@ public class ControladorAppMusic implements CancionesListener{
 		
 	}
 	//TODO como se eliminan las playlist
-	public void eliminarCancionPlaylist(String nombre, List<Cancion> canciones) {
+	public void eliminarCancionPlaylist(String nombre, List<String> titulos) {
 		
 		Playlist playlist = usuarioActual.getPlaylists().stream()
-														.filter(p -> p.getNombre().contains(nombre))
+														.filter(p -> p.getNombre().equals(nombre))
 														.findFirst()
 														.orElse(null);
-		//No deberia ser null
-		canciones.stream()
-				 .forEach(c -> playlist.removeCancion(c));
+		
+		if(playlist == null) {
+			return ;
+		}
+		
+		for(String titulo : titulos) {
+			Cancion cancion = catalogoCanciones.getCancion(titulo);
+			playlist.removeCancion(cancion);
+		}
+		
+		playlist.getCanciones().stream()
+							   .forEach(c -> System.out.println(c.getTitulo()));
 		
 		adaptadorPlaylist.modificarPlaylist(playlist);
 		
@@ -190,7 +199,7 @@ public class ControladorAppMusic implements CancionesListener{
 	public void anadirCancionPlaylist(String nombre, List<String> titulos) {
 		
 		Playlist playlist = usuarioActual.getPlaylists().stream()
-														.filter(p -> p.getNombre().contains(nombre))
+														.filter(p -> p.getNombre().equals(nombre))
 														.findFirst()
 														.orElse(null);
 		
@@ -277,7 +286,6 @@ public class ControladorAppMusic implements CancionesListener{
 			System.out.println(c.getTitulo());
 		}
 		*/
-		
 	}
 	
 	public String getUsuarioActual() {
@@ -299,7 +307,6 @@ public class ControladorAppMusic implements CancionesListener{
 		return usuarioActual.getPlaylists().stream().filter(p -> p.getNombre().equals(nombre)).flatMap(p -> p.getCanciones().stream()).toList();
 	}
 	
-	
 	public void reproducirCancion(String titulo) {
 		Cancion cancion = catalogoCanciones.getCancion(titulo);
 		//TODO:BOPRRAR
@@ -308,14 +315,22 @@ public class ControladorAppMusic implements CancionesListener{
 		if(player.isRepro()) {
 			player.stop();
 		}
+		usuarioActual.addCancionReciente(cancion);
+		cancion.addReproduccion();
+		adaptadorCancion.modificarCancion(cancion);
+		adaptadorUsuario.modificarUsuario(usuarioActual);
 		player.play(cancion);
 	}
 	
 	public void pausarCancion() {
-		player.pause();
+		if(cancionActual != null) {
+			player.pause();
+		}
+		
 	}
 	
 	public void pararCancion() {
+		cancionActual = null;
 		player.stop();
 	}
 	
