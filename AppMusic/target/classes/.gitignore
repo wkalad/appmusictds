@@ -1,2 +1,6 @@
-/vista/
+/META-INF/
+/auxiliares/
 /controlador/
+/modelo/
+/persistencia/
+/vista/

@@ -103,10 +103,11 @@ public class ControladorAppMusic implements CancionesListener{
 		//canciones.contains(canciones);
 		
 		Buscador buscador = new BuscadorSimple(canciones);
-		if(titulo != null) {
+		
+		if(!titulo.isEmpty() || titulo != null) {
 			buscador = new BuscadorTitulo(buscador, titulo);
 		}
-		if(interprete != null) {
+		if(!interprete.isEmpty() || interprete != null) {
 			buscador = new BuscadorInterprete(buscador, interprete);
 		}
 		if(estilo != null) {
@@ -237,6 +238,7 @@ public class ControladorAppMusic implements CancionesListener{
 					 			adaptadorCancion.crearCancion(c);
 					 			catalogoCanciones.addCancion(c);
 				 			   });
+		//TODO: ELIMINAR
 		/*
 		for(Cancion c : catalogoCanciones.getCanciones()) {
 			System.out.println(c.getTitulo());

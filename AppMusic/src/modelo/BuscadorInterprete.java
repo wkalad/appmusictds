@@ -14,9 +14,6 @@ public class BuscadorInterprete extends BuscadorDecorator{
 	
 	@Override
 	public List<Cancion> buscarCancion() {
-		if(interprete.isEmpty())
-			return new LinkedList<Cancion>();
-		
 		return super.buscarCancion().stream()
 									.filter(c -> c.getInterprete().contains(interprete))
 									.toList();

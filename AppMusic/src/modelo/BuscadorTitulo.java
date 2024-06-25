@@ -14,9 +14,6 @@ public class BuscadorTitulo extends BuscadorDecorator{
 	
 	@Override
 	public List<Cancion> buscarCancion() {
-		if(titulo.isEmpty())
-			return new LinkedList<Cancion>();
-		
 		return super.buscarCancion().stream()
 									.filter(c -> c.getTitulo().contains(titulo))
 									.toList();

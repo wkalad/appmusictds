@@ -42,21 +42,31 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 import controlador.ControladorAppMusic;
+import modelo.Cancion;
 import pulsador.Luz;
 import pulsador.IEncendidoListener;
 import java.util.EventObject;
+import java.util.List;
 
 public class VentanaPrincipal extends JFrame {
 
 	private JFrame frame;
 	private JTextField txtInterprete;
-	private JTextField textField_1;
+	private JTextField txtTitulo;
 	private JTable table;
 	private JTextField textField;
 	private JTable table_1;
+	JScrollPane scrollPane; //Scroll para la tabla de canciones
 	
-	
+	//Controlador
 	private ControladorAppMusic controladorAppMusic = ControladorAppMusic.getUnicaInstancia();
+	
+	//
+	List<Cancion> cancionesBuscadas;
+	private static String[] NOMBRES_COLUMNAS = {"Titulo", "Interprete", "Estilo", "Favoritas"};
+	//
+	private JPanel panelActual;
+	DefaultTableModel modelo;
 	
 	/**
 	 * Launch the application.
@@ -141,22 +151,21 @@ public class VentanaPrincipal extends JFrame {
 		
 		
 		JPanel panelCard = new JPanel();
-
 		//TODO: Aqui estaban los botones del panel izquierda
 
 		JPanel panel = new JPanel();
 		frame.getContentPane().add(panel, BorderLayout.CENTER);
 		panel.setLayout(new BorderLayout(0, 0));
 
-		JPanel panel_3 = new JPanel();
-		panel_3.setAlignmentX(Component.RIGHT_ALIGNMENT);
-		panel.add(panel_3, BorderLayout.NORTH);
-		GridBagLayout gbl_panel_3 = new GridBagLayout();
-		gbl_panel_3.columnWidths = new int[] { 128, 94, 73, 63, 0, 0, 0, 0 };
-		gbl_panel_3.rowHeights = new int[] { 23, 0 };
-		gbl_panel_3.columnWeights = new double[] { 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
-		gbl_panel_3.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
-		panel_3.setLayout(gbl_panel_3);
+		JPanel panelArriba = new JPanel();
+		panelArriba.setAlignmentX(Component.RIGHT_ALIGNMENT);
+		panel.add(panelArriba, BorderLayout.NORTH);
+		GridBagLayout gbl_panelArriba = new GridBagLayout();
+		gbl_panelArriba.columnWidths = new int[] { 128, 94, 73, 63, 0, 0, 0, 0 };
+		gbl_panelArriba.rowHeights = new int[] { 23, 0 };
+		gbl_panelArriba.columnWeights = new double[] { 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		gbl_panelArriba.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
+		panelArriba.setLayout(gbl_panelArriba);
 
 		JLabel lblNewLabel = new JLabel("Bienvenido " + controladorAppMusic.getUsuarioActual());
 		lblNewLabel.setHorizontalAlignment(SwingConstants.LEFT);
@@ -166,7 +175,7 @@ public class VentanaPrincipal extends JFrame {
 		gbc_lblNewLabel.insets = new Insets(0, 0, 0, 5);
 		gbc_lblNewLabel.gridx = 0;
 		gbc_lblNewLabel.gridy = 0;
-		panel_3.add(lblNewLabel, gbc_lblNewLabel);
+		panelArriba.add(lblNewLabel, gbc_lblNewLabel);
 
 		JButton btnNewButton_4 = new JButton("Premium");
 		GridBagConstraints gbc_btnNewButton_4 = new GridBagConstraints();
@@ -174,7 +183,7 @@ public class VentanaPrincipal extends JFrame {
 		gbc_btnNewButton_4.insets = new Insets(0, 0, 0, 5);
 		gbc_btnNewButton_4.gridx = 4;
 		gbc_btnNewButton_4.gridy = 0;
-		panel_3.add(btnNewButton_4, gbc_btnNewButton_4);
+		panelArriba.add(btnNewButton_4, gbc_btnNewButton_4);
 
 		JButton btnNewButton_5 = new JButton("logout");
 		GridBagConstraints gbc_btnNewButton_5 = new GridBagConstraints();
@@ -182,7 +191,7 @@ public class VentanaPrincipal extends JFrame {
 		gbc_btnNewButton_5.anchor = GridBagConstraints.NORTHWEST;
 		gbc_btnNewButton_5.gridx = 5;
 		gbc_btnNewButton_5.gridy = 0;
-		panel_3.add(btnNewButton_5, gbc_btnNewButton_5);
+		panelArriba.add(btnNewButton_5, gbc_btnNewButton_5);
 		
 		Luz luz = new Luz();
 		luz.addEncendidoListener(new IEncendidoListener() {
@@ -193,7 +202,7 @@ public class VentanaPrincipal extends JFrame {
 				int resultado = fileChooser.showOpenDialog(frame);
 				
 				if(resultado == JFileChooser.APPROVE_OPTION) {
-					//TODO:Aqui
+					//TODO:Aqui y si el archivo no funciona? o es incorrecto
 					System.out.println(fileChooser.getSelectedFile().getPath());
 					String path = fileChooser.getSelectedFile().getPath();
 					controladorAppMusic.cargarCanciones(path);
@@ -205,7 +214,7 @@ public class VentanaPrincipal extends JFrame {
 		GridBagConstraints gbc_luz = new GridBagConstraints();
 		gbc_luz.gridx = 6;
 		gbc_luz.gridy = 0;
-		panel_3.add(luz, gbc_luz);
+		panelArriba.add(luz, gbc_luz);
 
 		panel.add(panelCard, BorderLayout.CENTER);
 		panelCard.setLayout(new CardLayout(0, 0));
@@ -213,6 +222,9 @@ public class VentanaPrincipal extends JFrame {
 		JPanel panelBuscar = new JPanel();
 		panelCard.add(panelBuscar, "panelBuscar");
 		panelBuscar.setLayout(new BorderLayout(0, 0));
+		
+		//Ponemos el panel inical
+		panelActual = panelBuscar;
 		
 		JPanel panelBuscarNorte = new JPanel();
 		panelBuscarNorte.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -242,58 +254,51 @@ public class VentanaPrincipal extends JFrame {
 		panelBuscarNorte.add(txtInterprete, gbc_txtInterprete);
 		txtInterprete.setColumns(10);
 		
-		textField_1 = new JTextField();
-		textField_1.setName("titulo");
-		GridBagConstraints gbc_textField_1 = new GridBagConstraints();
-		gbc_textField_1.insets = new Insets(0, 0, 5, 5);
-		gbc_textField_1.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField_1.gridx = 1;
-		gbc_textField_1.gridy = 1;
-		panelBuscarNorte.add(textField_1, gbc_textField_1);
-		textField_1.setColumns(10);
+		txtTitulo = new JTextField();
+		txtTitulo.setName("titulo");
+		GridBagConstraints gbc_txtTitulo = new GridBagConstraints();
+		gbc_txtTitulo.insets = new Insets(0, 0, 5, 5);
+		gbc_txtTitulo.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtTitulo.gridx = 1;
+		gbc_txtTitulo.gridy = 1;
+		panelBuscarNorte.add(txtTitulo, gbc_txtTitulo);
+		txtTitulo.setColumns(10);
 		
-		JCheckBox chckbxNewCheckBox = new JCheckBox("favoritas");
-		GridBagConstraints gbc_chckbxNewCheckBox = new GridBagConstraints();
-		gbc_chckbxNewCheckBox.anchor = GridBagConstraints.WEST;
-		gbc_chckbxNewCheckBox.insets = new Insets(0, 0, 5, 5);
-		gbc_chckbxNewCheckBox.gridx = 0;
-		gbc_chckbxNewCheckBox.gridy = 2;
-		panelBuscarNorte.add(chckbxNewCheckBox, gbc_chckbxNewCheckBox);
+		JCheckBox checkBoxFavoritas = new JCheckBox("favoritas");
+		GridBagConstraints gbc_checkBoxFavoritas = new GridBagConstraints();
+		gbc_checkBoxFavoritas.anchor = GridBagConstraints.WEST;
+		gbc_checkBoxFavoritas.insets = new Insets(0, 0, 5, 5);
+		gbc_checkBoxFavoritas.gridx = 0;
+		gbc_checkBoxFavoritas.gridy = 2;
+		panelBuscarNorte.add(checkBoxFavoritas, gbc_checkBoxFavoritas);
 		
-		JComboBox comboBox = new JComboBox();
-		comboBox.setModel(new DefaultComboBoxModel(new String[] {"Estilo", "Pop"}));
-		comboBox.setToolTipText("");
-		GridBagConstraints gbc_comboBox = new GridBagConstraints();
-		gbc_comboBox.insets = new Insets(0, 0, 5, 5);
-		gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
-		gbc_comboBox.gridx = 1;
-		gbc_comboBox.gridy = 2;
-		panelBuscarNorte.add(comboBox, gbc_comboBox);
+		JComboBox comboBoxEstilo = new JComboBox();
+		comboBoxEstilo.setModel(new DefaultComboBoxModel(new String[] {"Estilo", "Pop"}));
+		comboBoxEstilo.setToolTipText("");
+		GridBagConstraints gbc_comboBoxEstilo = new GridBagConstraints();
+		gbc_comboBoxEstilo.insets = new Insets(0, 0, 5, 5);
+		gbc_comboBoxEstilo.fill = GridBagConstraints.HORIZONTAL;
+		gbc_comboBoxEstilo.gridx = 1;
+		gbc_comboBoxEstilo.gridy = 2;
+		panelBuscarNorte.add(comboBoxEstilo, gbc_comboBoxEstilo);
 		
-		JButton btnNewButton_6 = new JButton("buscar");
-		GridBagConstraints gbc_btnNewButton_6 = new GridBagConstraints();
-		gbc_btnNewButton_6.insets = new Insets(0, 0, 5, 5);
-		gbc_btnNewButton_6.gridx = 1;
-		gbc_btnNewButton_6.gridy = 4;
-		panelBuscarNorte.add(btnNewButton_6, gbc_btnNewButton_6);
+		JButton botonBuscarCancion = new JButton("buscar");
+		
+		GridBagConstraints gbc_botonBuscarCancion = new GridBagConstraints();
+		gbc_botonBuscarCancion.insets = new Insets(0, 0, 5, 5);
+		gbc_botonBuscarCancion.gridx = 1;
+		gbc_botonBuscarCancion.gridy = 4;
+		panelBuscarNorte.add(botonBuscarCancion, gbc_botonBuscarCancion);
 		
 		JPanel panelTablaCenter = new JPanel();
 		panelBuscar.add(panelTablaCenter, BorderLayout.CENTER);
 		
 		JCheckBox fav = new JCheckBox();
-		
+		/*
 		table = new JTable();
 		table.setModel(new DefaultTableModel(
 			new Object[][] {
 				{"Titulo", "Interprete", "Estilo", true},
-				{null, null, null, null},
-				{null, null, null, null},
-				{null, null, null, null},
-				{null, null, null, null},
-				{null, null, null, null},
-				{null, null, null, null},
-				{null, null, null, null},
-				{null, null, null, null},
 			},
 			new String[] {
 				"Titulo", "Interprete", "Estilo", "Favorito"
@@ -311,64 +316,16 @@ public class VentanaPrincipal extends JFrame {
 			public boolean isCellEditable(int row, int column) {
 				return columnEditables[column];
 			}
-		});
+		});*/
+		table = new JTable();
+		
+		Object[][] tabla = new Object[1][4];
+		modelo = new DefaultTableModel(tabla, NOMBRES_COLUMNAS);
+		table.setModel(modelo);
 		JScrollPane scrollPane = new JScrollPane(table);
 		scrollPane.setPreferredSize(new Dimension(452, 150));
-		panelTablaCenter.add(scrollPane);		
-		
-		JPanel panelReproSur = new JPanel();
-		panelBuscar.add(panelReproSur, BorderLayout.SOUTH);
-		panelReproSur.setLayout(new BorderLayout(0, 0));
-		
-		JPanel panelReproBarra = new JPanel();
-		panelReproSur.add(panelReproBarra, BorderLayout.NORTH);
-		
-		JSlider slider = new JSlider();
-		slider.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		panelReproBarra.add(slider);
-		
-		JPanel panelBotones = new JPanel();
-		panelReproSur.add(panelBotones, BorderLayout.SOUTH);
-		
-		JButton botonIzquierda = new JButton("");
-		botonIzquierda.setPreferredSize(new Dimension(32, 32));
-		botonIzquierda.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/izquierda.png")));
-		panelBotones.add(botonIzquierda);
-		
-		JButton botonParar = new JButton("");
-		botonParar.setPreferredSize(new Dimension(32, 32));
-		botonParar.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/detener.png")));
-		panelBotones.add(botonParar);
-		
-		JButton botonPausa = new JButton("");
-		botonPausa.setPreferredSize(new Dimension(32, 32));
-		botonPausa.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/pausa.png")));
-		panelBotones.add(botonPausa);
-		
-		JButton botonPlay = new JButton("");
-		botonPlay.setPreferredSize(new Dimension(32, 32));
-		botonPlay.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/boton-de-play.png")));
-		panelBotones.add(botonPlay);
-		
-		JButton botonDerecha = new JButton("");
-		botonDerecha.setPreferredSize(new Dimension(32, 32));
-		botonDerecha.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/chevron-derecho.png")));
-		panelBotones.add(botonDerecha);
-		
-		JButton botonEliminar = new JButton("<html>Añadir<br>a Lista</html>");
-		botonEliminar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				///TODO: Ver bien el dialogBox
-				VentanaAñadirALista ventanaAddList = new VentanaAñadirALista();
-				ventanaAddList.setTitle("Añadir a Lista");
-				ventanaAddList.setVisible(true);
-				ventanaAddList.setDefaultCloseOperation(ventanaAddList.DISPOSE_ON_CLOSE);
-			}
-		});
-		
-		JLabel lblNewLabel_2 = new JLabel("                                     ");
-		panelBotones.add(lblNewLabel_2);
-		panelBotones.add(botonEliminar);
+		//scrollPane.setVisible(false);
+		panelTablaCenter.add(scrollPane);
 
 		JPanel panelGestionPlaylists = new JPanel();
 		panelCard.add(panelGestionPlaylists, "panelGestionPlaylists");
@@ -423,11 +380,7 @@ public class VentanaPrincipal extends JFrame {
 		panelBoton.setLayout(gbl_panelBoton);
 		
 		JButton botonBuscar = new JButton("Buscar");
-		botonBuscar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-			}
-		});
+		
 		GridBagConstraints gbc_botonBuscar = new GridBagConstraints();
 		gbc_botonBuscar.fill = GridBagConstraints.HORIZONTAL;
 		gbc_botonBuscar.insets = new Insets(0, 0, 5, 0);
@@ -436,6 +389,7 @@ public class VentanaPrincipal extends JFrame {
 		panelBoton.add(botonBuscar, gbc_botonBuscar);
 		
 		JButton botonGestionPlaylist = new JButton("GestionPlaylist");
+		
 		GridBagConstraints gbc_botonGestionPlaylist = new GridBagConstraints();
 		gbc_botonGestionPlaylist.fill = GridBagConstraints.HORIZONTAL;
 		gbc_botonGestionPlaylist.insets = new Insets(0, 0, 5, 0);
@@ -468,72 +422,8 @@ public class VentanaPrincipal extends JFrame {
 		GridBagConstraints gbc_botonMisPlaylists_1 = new GridBagConstraints();
 		gbc_botonMisPlaylists_1.gridx = 0;
 		gbc_botonMisPlaylists_1.gridy = 4;
-		//TODO: Añadir al nuevo Panel
-		
-		JPanel panelGReproSur = new JPanel();
-		panelGestionPlaylists.add(panelGReproSur, BorderLayout.SOUTH);
-		panelGReproSur.setLayout(new BorderLayout(0, 0));
-		
-		JPanel panelGReproBarra = new JPanel();
-		panelGReproSur.add(panelGReproBarra, BorderLayout.NORTH);
-		
-		JSlider slider_1 = new JSlider();
-		panelGReproBarra.add(slider_1);
-		
-		JPanel panelGBotones = new JPanel();
-		panelGReproSur.add(panelGBotones, BorderLayout.SOUTH);
 		GridBagConstraints gbl_panelGBotones = new GridBagConstraints();
 		gbl_panelGBotones.fill = GridBagConstraints.HORIZONTAL;
-
-		
-		JButton btnNewButton_15 = new JButton("");
-		btnNewButton_15.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/izquierda.png")));
-		GridBagConstraints gbc_btnNewButton_15 = new GridBagConstraints();
-		gbc_btnNewButton_15.insets = new Insets(0, 0, 0, 5);
-		gbc_btnNewButton_15.gridx = 0;
-		gbc_btnNewButton_15.gridy = 0;
-		panelGBotones.add(btnNewButton_15, gbc_btnNewButton_15);
-		
-		JButton btnNewButton_16 = new JButton("");
-		btnNewButton_16.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/detener.png")));
-		GridBagConstraints gbc_btnNewButton_16 = new GridBagConstraints();
-		gbc_btnNewButton_16.insets = new Insets(0, 0, 0, 5);
-		gbc_btnNewButton_16.gridx = 1;
-		gbc_btnNewButton_16.gridy = 0;
-		panelGBotones.add(btnNewButton_16, gbc_btnNewButton_16);
-		
-		JButton btnNewButton_17 = new JButton("");
-		btnNewButton_17.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/pausa.png")));
-		GridBagConstraints gbc_btnNewButton_17 = new GridBagConstraints();
-		gbc_btnNewButton_17.insets = new Insets(0, 0, 0, 5);
-		gbc_btnNewButton_17.gridx = 2;
-		gbc_btnNewButton_17.gridy = 0;
-		panelGBotones.add(btnNewButton_17, gbc_btnNewButton_17);
-		
-		JButton btnNewButton_18 = new JButton("");
-		btnNewButton_18.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/boton-de-play.png")));
-		GridBagConstraints gbc_btnNewButton_18 = new GridBagConstraints();
-		gbc_btnNewButton_18.insets = new Insets(0, 0, 0, 5);
-		gbc_btnNewButton_18.gridx = 3;
-		gbc_btnNewButton_18.gridy = 0;
-		panelGBotones.add(btnNewButton_18, gbc_btnNewButton_18);
-		
-		JButton btnNewButton_19 = new JButton("");
-		btnNewButton_19.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/chevron-derecho.png")));
-		GridBagConstraints gbc_btnNewButton_19 = new GridBagConstraints();
-		gbc_btnNewButton_19.insets = new Insets(0, 0, 0, 5);
-		gbc_btnNewButton_19.gridx = 4;
-		gbc_btnNewButton_19.gridy = 0;
-		panelGBotones.add(btnNewButton_19, gbc_btnNewButton_19);
-		
-		JLabel lblNewLabel_4 = new JLabel("                                     ");
-		panelGBotones.add(lblNewLabel_4);
-		
-		JButton btnNewButton_20 = new JButton("<html>Eliminar<br>de Lista</html>");
-		GridBagConstraints gbc_btnNewButton_20 = new GridBagConstraints();
-		gbc_btnNewButton_20.gridx = 10;
-		gbc_btnNewButton_20.gridy = 0;
-		panelGBotones.add(btnNewButton_20, gbc_btnNewButton_20);
 
 		JPanel panelRecientes = new JPanel();
 		panelCard.add(panelRecientes, "panelRecientes");
@@ -541,34 +431,6 @@ public class VentanaPrincipal extends JFrame {
 		
 		JPanel panel_6 = new JPanel();
 		panelRecientes.add(panel_6, BorderLayout.CENTER);
-		
-		JPanel panel_7 = new JPanel();
-		panelRecientes.add(panel_7, BorderLayout.SOUTH);
-		
-		JButton botonIzquierda_1 = new JButton("");
-		botonIzquierda_1.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/izquierda.png")));
-		botonIzquierda_1.setPreferredSize(new Dimension(32, 32));
-		panel_7.add(botonIzquierda_1);
-		
-		JButton botonParar_1 = new JButton("");
-		botonParar_1.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/detener.png")));
-		botonParar_1.setPreferredSize(new Dimension(32, 32));
-		panel_7.add(botonParar_1);
-		
-		JButton botonPausa_1 = new JButton("");
-		botonPausa_1.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/boton-de-play.png")));
-		botonPausa_1.setPreferredSize(new Dimension(32, 32));
-		panel_7.add(botonPausa_1);
-		
-		JButton botonPlay_1 = new JButton("");
-		botonPlay_1.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/pausa.png")));
-		botonPlay_1.setPreferredSize(new Dimension(32, 32));
-		panel_7.add(botonPlay_1);
-		
-		JButton botonDerecha_1 = new JButton("");
-		botonDerecha_1.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/chevron-derecho.png")));
-		botonDerecha_1.setPreferredSize(new Dimension(32, 32));
-		panel_7.add(botonDerecha_1);
 
 		JPanel panelMisPlaylists = new JPanel();
 		panelCard.add(panelMisPlaylists, "panelMisPlaylists");
@@ -577,33 +439,52 @@ public class VentanaPrincipal extends JFrame {
 		JPanel panel_8 = new JPanel();
 		panelMisPlaylists.add(panel_8, BorderLayout.CENTER);
 		
-		JPanel panel_9 = new JPanel();
-		panelMisPlaylists.add(panel_9, BorderLayout.SOUTH);
+		JPanel panelReproduccion = new JPanel();
+		panel.add(panelReproduccion, BorderLayout.SOUTH);
+		GridBagLayout gbl_panelReproduccion = new GridBagLayout();
+		gbl_panelReproduccion.columnWidths = new int[] {0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gbl_panelReproduccion.rowHeights = new int[] {0};
+		gbl_panelReproduccion.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+		gbl_panelReproduccion.rowWeights = new double[]{0.0};
+		panelReproduccion.setLayout(gbl_panelReproduccion);
 		
-		JButton botonIzquierda_2 = new JButton("");
-		botonIzquierda_2.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/izquierda.png")));
-		botonIzquierda_2.setPreferredSize(new Dimension(32, 32));
-		panel_9.add(botonIzquierda_2);
+		JButton btnNewButton = new JButton("");
+		btnNewButton.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/izquierda.png")));
+		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
+		gbc_btnNewButton.insets = new Insets(0, 0, 0, 5);
+		gbc_btnNewButton.gridx = 0;
+		gbc_btnNewButton.gridy = 0;
+		panelReproduccion.add(btnNewButton, gbc_btnNewButton);
 		
-		JButton botonParar_2 = new JButton("");
-		botonParar_2.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/detener.png")));
-		botonParar_2.setPreferredSize(new Dimension(32, 32));
-		panel_9.add(botonParar_2);
+		JButton btnNewButton_1 = new JButton("");
+		btnNewButton_1.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/pausa.png")));
+		GridBagConstraints gbc_btnNewButton_1 = new GridBagConstraints();
+		gbc_btnNewButton_1.insets = new Insets(0, 0, 0, 5);
+		gbc_btnNewButton_1.gridx = 1;
+		gbc_btnNewButton_1.gridy = 0;
+		panelReproduccion.add(btnNewButton_1, gbc_btnNewButton_1);
 		
-		JButton botonPausa_2 = new JButton("");
-		botonPausa_2.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/boton-de-play.png")));
-		botonPausa_2.setPreferredSize(new Dimension(32, 32));
-		panel_9.add(botonPausa_2);
+		JButton btnNewButton_2 = new JButton("");
+		btnNewButton_2.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/boton-de-play.png")));
+		GridBagConstraints gbc_btnNewButton_2 = new GridBagConstraints();
+		gbc_btnNewButton_2.insets = new Insets(0, 0, 0, 5);
+		gbc_btnNewButton_2.gridx = 2;
+		gbc_btnNewButton_2.gridy = 0;
+		panelReproduccion.add(btnNewButton_2, gbc_btnNewButton_2);
 		
-		JButton botonPlay_2 = new JButton("");
-		botonPlay_2.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/pausa.png")));
-		botonPlay_2.setPreferredSize(new Dimension(32, 32));
-		panel_9.add(botonPlay_2);
+		JButton btnNewButton_3 = new JButton("");
+		btnNewButton_3.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/chevron-derecho.png")));
+		GridBagConstraints gbc_btnNewButton_3 = new GridBagConstraints();
+		gbc_btnNewButton_3.insets = new Insets(0, 0, 0, 5);
+		gbc_btnNewButton_3.gridx = 3;
+		gbc_btnNewButton_3.gridy = 0;
+		panelReproduccion.add(btnNewButton_3, gbc_btnNewButton_3);
 		
-		JButton botonDerecha_2 = new JButton("");
-		botonDerecha_2.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/recursos/chevron-derecho.png")));
-		botonDerecha_2.setPreferredSize(new Dimension(32, 32));
-		panel_9.add(botonDerecha_2);
+		JButton btnNewButton_7 = new JButton("Añadir a Lista");
+		GridBagConstraints gbc_btnNewButton_7 = new GridBagConstraints();
+		gbc_btnNewButton_7.gridx = 8;
+		gbc_btnNewButton_7.gridy = 0;
+		panelReproduccion.add(btnNewButton_7, gbc_btnNewButton_7);
 
 		JPanel panel_1 = new JPanel();
 		frame.getContentPane().add(panel_1, BorderLayout.NORTH);
@@ -624,6 +505,66 @@ public class VentanaPrincipal extends JFrame {
 
 		JPanel panel_2 = new JPanel();
 		frame.getContentPane().add(panel_2, BorderLayout.SOUTH);
+		
+		botonBuscar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panelActual.setVisible(false);
+				panelBuscar.setVisible(true);
+				panelActual = panelBuscar;
+				panelReproduccion.setVisible(true);
+				//TODO mostrarPanelRepro
+			}
+		});
+		
+		botonBuscarCancion.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String interprete = txtInterprete.getText();
+				String titulo = txtTitulo.getText();
+				String estilo = (String) comboBoxEstilo.getSelectedItem();
+				boolean favoritas = checkBoxFavoritas.isSelected();
+				if(estilo == "Estilo") {
+					estilo = null;
+				}
+				
+				cancionesBuscadas = controladorAppMusic.buscarCancion(titulo, interprete, estilo, favoritas);
+				
+				
+				Object[][] tabla = new Object[cancionesBuscadas.size()][4];
+				int i = 0;
+				for(Cancion c:cancionesBuscadas) {
+					tabla[i][0] = c.getTitulo();
+					tabla[i][1] = c.getInterprete();
+					tabla[i][2] = c.getEstilo();
+					tabla[i][3] = false;
+					i++;
+				}
+				modelo = new DefaultTableModel(tabla, NOMBRES_COLUMNAS);
+				table.setModel(modelo);
+				table.setSelectionBackground(new Color(0, 128, 0));
+				table.setVisible(true);
+				
+				//scrollPane = new JScrollPane(table);
+				//scrollPane.setPreferredSize(new Dimension(452, 150));
+				//scrollPane.setVisible(true);
+				//panelTablaCenter.add(scrollPane);
+				
+				
+			}
+		});
+		
+		botonGestionPlaylist.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panelReproduccion.setVisible(true);
+				
+				
+				
+				panelActual.setVisible(false);
+				panelGestionPlaylists.setVisible(true);
+				panelActual = panelGestionPlaylists;
+				
+				
+			}
+		});
 	}
 
 }
