@@ -45,7 +45,7 @@ public class AdaptadorPlaylist implements IAdaptadorPlaylist{
 		if(ePlaylist != null) return ;
 		
 		ePlaylist = new Entidad();
-		ePlaylist.setNombre("Playlist");
+		ePlaylist.setNombre("playlist");
 		
 		
 		ePlaylist.setPropiedades(new ArrayList<Propiedad>(
