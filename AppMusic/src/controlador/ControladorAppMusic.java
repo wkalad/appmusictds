@@ -155,17 +155,32 @@ public class ControladorAppMusic implements CancionesListener{
 		
 		if(playlist == null) {
 			playlist = new Playlist(nombre);
-			//playlist.setPlaylist(canciones);
-			//Guardar en persistencia
 			usuarioActual.addPlaylist(playlist);
 			adaptadorPlaylist.crearPlaylist(playlist);
 			adaptadorUsuario.modificarUsuario(usuarioActual);
 			return true;
 		}
-		//TODO no se devuelve
 		return false;
 		
 	}
+	
+	public void eliminarPlaylist(String nombre) {
+		Playlist playlist = usuarioActual.getPlaylists().stream()
+										 .filter(p -> p.getNombre().equals(nombre))
+										 .findFirst()
+										 .orElse(null);
+		
+		if(playlist == null) {
+			return;
+		}
+		
+		usuarioActual.removePlaylist(playlist);
+		adaptadorPlaylist.borrarPlaylist(playlist);
+		adaptadorUsuario.modificarUsuario(usuarioActual);
+		
+	}
+	
+	
 	//TODO como se eliminan las playlist
 	public void eliminarCancionPlaylist(String nombre, List<String> titulos) {
 		
@@ -329,6 +344,9 @@ public class ControladorAppMusic implements CancionesListener{
 		player.stop();
 	}
 	
+	public boolean isCancionFavorita(Cancion cancion) {
+		return cancion.isFavorita(usuarioActual);
+	}
 	
 	
 }

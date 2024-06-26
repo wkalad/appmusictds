@@ -131,6 +131,10 @@ public class Usuario {
 			playlists.add(playlist);
 		}
 		
+		public void removePlaylist(Playlist playlist) {
+			playlists.remove(playlist);
+		}
+		
 		public void addCancionReciente(Cancion cancion) {
 			//recientes.add(cancion);
 			recientes.add(0, cancion);

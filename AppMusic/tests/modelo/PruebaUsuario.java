@@ -40,9 +40,7 @@ public class PruebaUsuario {
 	public void testAddPlaylist() {
 		usuario.addPlaylist(playlist);
 		assertEquals(1, usuario.getPlaylists().size());
-		Set<Playlist> playlists = new HashSet<>();
-		playlists.add(playlist);
-		assertEquals(playlists.contains(playlist), usuario.getPlaylists().contains(playlist));
+		assertEquals(true, usuario.getPlaylists().contains(playlist));
 	}
 	
 	@Test(expected = NullPointerException.class)

@@ -2,6 +2,7 @@ package vista;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Checkbox;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -137,6 +138,7 @@ public class VentanaPrincipal extends JFrame {
 		frame.getContentPane().setLayout(new BorderLayout(0, 0));
 		
 		JPanel panelLateral = new JPanel();
+		panelLateral.setMaximumSize(new Dimension(10, 10));
 		panelLateral.setAlignmentX(0.0f);
 		frame.getContentPane().add(panelLateral, BorderLayout.WEST);
 		panelLateral.setLayout(new BorderLayout(0, 0));
@@ -145,17 +147,19 @@ public class VentanaPrincipal extends JFrame {
 		panelLateral.add(panelBoton, BorderLayout.NORTH);
 		
 		JPanel panelListas = new JPanel();
+		panelListas.setMaximumSize(new Dimension(10, 10));
 		panelListas.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		panelLateral.add(panelListas, BorderLayout.CENTER);
-		panelListas.setLayout(new BorderLayout(0, 0));
+		panelListas.setLayout(null);
 		
 		JPanel panel_4 = new JPanel();
-		panelListas.add(panel_4, BorderLayout.CENTER);
-		panel_4.setLayout(new BorderLayout());
+		panel_4.setBounds(2, 26, 115, 221);
+		panelListas.add(panel_4);
 		
 		
 		listModel = new DefaultListModel<>();
 		JList<String> list = new JList<>(listModel);
+		list.setMaximumSize(new Dimension(10, 10));
 		
 		
 		List<String> playlists = controladorAppMusic.getPlaylists();
@@ -164,15 +168,23 @@ public class VentanaPrincipal extends JFrame {
 			listModel.add(j, p);
 			j++;
 		}
+		panel_4.setLayout(null);
 		
 		JScrollPane scrollPane_1 = new JScrollPane(list);
+		scrollPane_1.setBounds(0, 0, 115, 221);
+		scrollPane_1.setMinimumSize(new Dimension(10, 10));
+		scrollPane_1.setMaximumSize(new Dimension(10, 10));
 		scrollPane_1.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		panel_4.add(scrollPane_1, BorderLayout.CENTER);
+		panel_4.add(scrollPane_1);
 		
 		JPanel panel_5 = new JPanel();
-		panelListas.add(panel_5, BorderLayout.NORTH);
+		panel_5.setBounds(2, 0, 115, 24);
+		panel_5.setMaximumSize(new Dimension(10, 10));
+		panelListas.add(panel_5);
+		panel_5.setLayout(null);
 		
 		JLabel lblNewLabel_5 = new JLabel("Listas");
+		lblNewLabel_5.setBounds(36, 0, 43, 24);
 		panel_5.add(lblNewLabel_5);
 		
 		
@@ -381,6 +393,7 @@ public class VentanaPrincipal extends JFrame {
 		panelAñadirNorte.add(botonCrearPlaylist, gbc_botonCrearPlaylist);
 		
 		JButton botonEliminarPlaylist = new JButton("Eliminar");
+		
 		GridBagConstraints gbc_botonEliminarPlaylist = new GridBagConstraints();
 		gbc_botonEliminarPlaylist.insets = new Insets(0, 0, 0, 5);
 		gbc_botonEliminarPlaylist.gridx = 2;
@@ -656,24 +669,18 @@ public class VentanaPrincipal extends JFrame {
 				
 				Object[][] tabla = new Object[cancionesBuscadas.size()][4];
 				int i = 0;
+				
 				for(Cancion c:cancionesBuscadas) {
 					tabla[i][0] = c.getTitulo();
 					tabla[i][1] = c.getInterprete();
 					tabla[i][2] = c.getEstilo();
-					tabla[i][3] = false;
+					tabla[i][3] = controladorAppMusic.isCancionFavorita(c);
 					i++;
 				}
 				modelo = new DefaultTableModel(tabla, NOMBRES_COLUMNAS);
 				table.setModel(modelo);
 				table.setSelectionBackground(new Color(0, 128, 0));
-				table.setVisible(true);
-				
-				//scrollPane = new JScrollPane(table);
-				//scrollPane.setPreferredSize(new Dimension(452, 150));
-				//scrollPane.setVisible(true);
-				//panelTablaCenter.add(scrollPane);
-				
-				
+				table.setVisible(true);	
 			}
 		});
 		
@@ -723,9 +730,7 @@ public class VentanaPrincipal extends JFrame {
 					valor = tablaTopTen.getValueAt(fila, 0);
 				}
 				
-				controladorAppMusic.reproducirCancion(valor.toString());
-				
-				
+				controladorAppMusic.reproducirCancion(valor.toString());	
 			}
 		});
 		
@@ -795,12 +800,25 @@ public class VentanaPrincipal extends JFrame {
 					
 					//System.out.println("PLaulsit " +  lista);
 					
+
+					
 					int[] lineas = table.getSelectedRows();
+					Object[][] tabla = new Object[lineas.length][3];
 					List<String> titulos = new LinkedList<>();
 					for(int i = 0; i < lineas.length; i++) {
 						Object valor = table.getValueAt(lineas[i], 0);
 						titulos.add(valor.toString());
+						tabla[i][0] = table.getValueAt(lineas[i], 0);
+						tabla[i][1] = table.getValueAt(lineas[i], 1);
+						tabla[i][2] = table.getValueAt(lineas[i], 2);
+						
 					}
+					
+					modelo = new DefaultTableModel(tabla, NOMBRES_COLUMNAS2);
+					tablaPlaylist.setModel(modelo);
+					tablaPlaylist.setSelectionBackground(new Color(0, 128, 0));
+					tablaPlaylist.setVisible(true);
+					
 					
 					controladorAppMusic.anadirCancionPlaylist(lista, titulos);
 					
@@ -840,31 +858,33 @@ public class VentanaPrincipal extends JFrame {
 		
 		list.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
-				if(panelActual != panelMisPlaylists) {
+				if(panelActual == panelGestionPlaylists) {
 					
-					return;
+					String nombre = list.getSelectedValue();
+					textNombrePlaylist.setText(nombre);
 					
+				}else if(panelActual == panelMisPlaylists) {
+					String nombre = list.getSelectedValue();
+					
+					System.out.println("PLaulsit " +  nombre);
+					
+					List<Cancion> canciones = controladorAppMusic.getCancionePlaylists(nombre);
+					
+					
+					Object[][] tabla = new Object[canciones.size()][3];
+					int i = 0;
+					for(Cancion c:canciones) {
+						tabla[i][0] = c.getTitulo();
+						tabla[i][1] = c.getInterprete();
+						tabla[i][2] = c.getEstilo();
+						
+						i++;
+					}
+					modelo = new DefaultTableModel(tabla, NOMBRES_COLUMNAS2);
+					tablaPlaylist.setModel(modelo);
+					tablaPlaylist.setSelectionBackground(new Color(0, 128, 0));
+					tablaPlaylist.setVisible(true);
 				}
-				String nombre = list.getSelectedValue();
-				
-				System.out.println("PLaulsit " +  nombre);
-				
-				List<Cancion> canciones = controladorAppMusic.getCancionePlaylists(nombre);
-				
-				
-				Object[][] tabla = new Object[canciones.size()][3];
-				int i = 0;
-				for(Cancion c:canciones) {
-					tabla[i][0] = c.getTitulo();
-					tabla[i][1] = c.getInterprete();
-					tabla[i][2] = c.getEstilo();
-					
-					i++;
-				}
-				modelo = new DefaultTableModel(tabla, NOMBRES_COLUMNAS2);
-				tablaPlaylist.setModel(modelo);
-				tablaPlaylist.setSelectionBackground(new Color(0, 128, 0));
-				tablaPlaylist.setVisible(true);
 			}
 		});
 		
@@ -940,6 +960,17 @@ public class VentanaPrincipal extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				
 				controladorAppMusic.generarPDF();
+			}
+		});
+		
+		botonEliminarPlaylist.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String nombre = textNombrePlaylist.getText();
+				
+				
+				listModel.removeElement(nombre);
+				
+				controladorAppMusic.eliminarPlaylist(nombre);
 			}
 		});
 	}

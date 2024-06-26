@@ -41,17 +41,26 @@ public class Playlist {
 	public void setId(int id) {
 		this.id = id;
 	}
-	
+
 	public void setPlaylist(List<Cancion> canciones) {
 		this.canciones = canciones;
 	}
-	
+
 	// MÉTODOS
 	public boolean addCancion(Cancion cancion) {
 		return canciones.add(cancion);
 	}
-	
+
 	public boolean removeCancion(Cancion cancion) {
 		return canciones.remove(cancion);
+	}
+
+	public boolean equals(Object obj) {
+		Playlist playlist = (Playlist) obj;
+		
+		if (this.getNombre().equals(playlist.getNombre())) {
+			return true;
+		}
+		return false;
 	}
 }
