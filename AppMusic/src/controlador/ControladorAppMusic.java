@@ -223,9 +223,12 @@ public class ControladorAppMusic implements CancionesListener{
 	}
 
 	//Esto solo es para el usuario premium
-	public void generarPDF(String ruta) {
-		ruta = ruta + "\\" + usuarioActual.getNombre() + ".pdf";
+	public void generarPDF() {
 		
+		//Crea el pdf en el directorio local
+		String ruta = System.getProperty("user.dir") + "\\" + usuarioActual.getNombre() + ".pdf";
+		
+		//Como solo tenemos un tipo de API utilizamos esa directamente
 		IAdaptadorPDF adaptadorPDF = new AdaptadorIText();
 		
 		adaptadorPDF.generarPDF(usuarioActual, ruta);

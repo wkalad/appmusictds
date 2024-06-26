@@ -47,7 +47,7 @@ public class Cancion {
 	}
 	
 	public String getCancionInfo() {
-		return getTitulo() + " " + getInterprete() + " " + getEstilo();
+		return "Titulo: " + getTitulo() + " Interprete: " + getInterprete() + " Estilo: " + getEstilo();
 	}
 
 	// MÉTODOS SET

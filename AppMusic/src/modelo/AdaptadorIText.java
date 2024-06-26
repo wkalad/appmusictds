@@ -29,13 +29,20 @@ public class AdaptadorIText implements IAdaptadorPDF{
 			e.printStackTrace();
 		}
 		
-
+		documento.open();
+		
+		try {
+			documento.add(new Paragraph("Usuario: " + usuario.getNombre() + "\n"));
+		} catch (DocumentException e1) {
+			e1.printStackTrace();
+		}
+		
 		for(Playlist p : usuario.getPlaylists()) {
 			
 			try {
-				documento.add(new Paragraph(p.getNombre()));
+				documento.add(new Paragraph("Playlist: " + p.getNombre()));
+				documento.add(new Paragraph("Canciones:"));
 			} catch (DocumentException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
@@ -43,9 +50,14 @@ public class AdaptadorIText implements IAdaptadorPDF{
 				try {
 					documento.add(new Paragraph(c.getCancionInfo()));
 				} catch (DocumentException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+			}
+			
+			try {
+				documento.add(new Paragraph("\n"));
+			} catch (DocumentException e) {
+				e.printStackTrace();
 			}
 		}
 		

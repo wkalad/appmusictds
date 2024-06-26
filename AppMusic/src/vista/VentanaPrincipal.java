@@ -448,6 +448,7 @@ public class VentanaPrincipal extends JFrame {
 		panelBoton.add(botonTopTen, gbc_botonTopTen);
 		
 		botonPDF = new JButton("CreadorPDF");
+		
 		GridBagConstraints gbc_botonPDF = new GridBagConstraints();
 		gbc_botonPDF.fill = GridBagConstraints.HORIZONTAL;
 		gbc_botonPDF.gridx = 0;
@@ -588,12 +589,13 @@ public class VentanaPrincipal extends JFrame {
 		gbl_panelPDF.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panelPDF.setLayout(gbl_panelPDF);
 		
-		JButton btnNewButton = new JButton("Generar PDF");
-		btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
-		gbc_btnNewButton.gridx = 8;
-		gbc_btnNewButton.gridy = 3;
-		panelPDF.add(btnNewButton, gbc_btnNewButton);
+		JButton botonGenerarPDF = new JButton("Generar PDF");
+		
+		botonGenerarPDF.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		GridBagConstraints gbc_botonGenerarPDF = new GridBagConstraints();
+		gbc_botonGenerarPDF.gridx = 8;
+		gbc_botonGenerarPDF.gridy = 3;
+		panelPDF.add(botonGenerarPDF, gbc_botonGenerarPDF);
 		
 		
 		tablaTopTen = new JTable();
@@ -717,6 +719,9 @@ public class VentanaPrincipal extends JFrame {
 				}else if(panelActual == panelRecientes) {
 					int fila = tablaRecientes.getSelectedRow();
 					valor = tablaRecientes.getValueAt(fila, 0);
+				}else if(panelActual == panelTopTen) {
+					int fila = tablaTopTen.getSelectedRow();
+					valor = tablaTopTen.getValueAt(fila, 0);
 				}
 				
 				controladorAppMusic.reproducirCancion(valor.toString());
@@ -920,6 +925,22 @@ public class VentanaPrincipal extends JFrame {
 				panelActual = panelTopTen;
 				panelReproduccion.setVisible(true);
 
+			}
+		});
+		
+		botonPDF.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panelActual.setVisible(false);
+				panelPDF.setVisible(true);
+				panelActual = panelPDF;
+				panelReproduccion.setVisible(false);
+			}
+		});
+		
+		botonGenerarPDF.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				controladorAppMusic.generarPDF();
 			}
 		});
 	}
