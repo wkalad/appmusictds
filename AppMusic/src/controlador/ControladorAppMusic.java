@@ -315,18 +315,22 @@ public class ControladorAppMusic implements CancionesListener{
 		if(player.isRepro()) {
 			player.stop();
 		}
+		
 		usuarioActual.addCancionReciente(cancion);
+		System.out.println(cancion.getNumReproducciones());
 		cancion.addReproduccion();
 		adaptadorCancion.modificarCancion(cancion);
+		System.out.println(adaptadorCancion.recuperarCancion(cancion.getId()).getNumReproducciones());
+
 		adaptadorUsuario.modificarUsuario(usuarioActual);
+		
 		player.play(cancion);
 	}
 	
 	public void pausarCancion() {
 		if(cancionActual != null) {
 			player.pause();
-		}
-		
+		}	
 	}
 	
 	public void pararCancion() {

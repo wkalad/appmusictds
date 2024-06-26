@@ -43,7 +43,7 @@ public class AdaptadorCancion implements IAdaptadorCancion {
 		
 		
 		eCancion = new Entidad();
-		eCancion.setNombre("Cancion");
+		eCancion.setNombre("cancion");
 		
 		eCancion.setPropiedades(new ArrayList<Propiedad>(
 	            Arrays.asList(
@@ -97,8 +97,6 @@ public class AdaptadorCancion implements IAdaptadorCancion {
 
 	@Override
 	public void modificarCancion(Cancion cancion) {
-
-
 		
 		Entidad eCancion;
 		eCancion = servicioPersistencia.recuperarEntidad(cancion.getId());
