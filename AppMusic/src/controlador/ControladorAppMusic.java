@@ -2,10 +2,7 @@ package controlador;
 
 import java.io.IOException;
 import java.util.Comparator;
-import java.util.EventObject;
 import java.util.List;
-import java.util.Set;
-
 import org.kohsuke.github.GHUser;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
@@ -155,10 +152,7 @@ public class ControladorAppMusic implements CancionesListener{
 														.findFirst()
 														.orElse(null);
 		
-		//Set<Playlist> playlists = usuarioActual.getPlaylists();
 		
-		
-		//No existe por lo tanto se pude crear
 		if(playlist == null) {
 			playlist = new Playlist(nombre);
 			//playlist.setPlaylist(canciones);
@@ -280,12 +274,6 @@ public class ControladorAppMusic implements CancionesListener{
 					 			adaptadorCancion.crearCancion(c);
 					 			catalogoCanciones.addCancion(c);
 				 			   });
-		//TODO: ELIMINAR
-		/*
-		for(Cancion c : catalogoCanciones.getCanciones()) {
-			System.out.println(c.getTitulo());
-		}
-		*/
 	}
 	
 	public String getUsuarioActual() {
