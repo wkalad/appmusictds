@@ -638,7 +638,6 @@ public class VentanaPrincipal extends JFrame {
 				panelBuscar.setVisible(true);
 				panelActual = panelBuscar;
 				panelReproduccion.setVisible(true);
-				//TODO mostrarPanelRepro
 			}
 		});
 		
