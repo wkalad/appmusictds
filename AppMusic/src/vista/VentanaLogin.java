@@ -84,7 +84,6 @@ public class VentanaLogin extends JFrame {
 			UIManager.setLookAndFeel("com.jtattoo.plaf.hifi.HiFiLookAndFeel");
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 				| UnsupportedLookAndFeelException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -235,13 +234,10 @@ public class VentanaLogin extends JFrame {
 				
 				boolean validacion = controladorAppMusic.iniciarSesion(nombre, contrasena);
 				if(validacion) {
-					//TODO: Verificar
 					VentanaPrincipal ventanaPrincipal = new VentanaPrincipal();
-					//ventanaPrincipal.setVisible(true);
 					frame.getContentPane().removeAll();
 					frame.getContentPane().revalidate();
 					frame.dispose();
-					//cerrarVentana();
 				}else {
 					usuarioContrIncorrecto.setVisible(true);
 				}
@@ -358,7 +354,6 @@ public class VentanaLogin extends JFrame {
 		JButton botonRegistrarse = new JButton("Registrarse");
 		botonRegistrarse.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//TODO:Extraer variables
 				String nombre = textFieldUsuarioR.getText();
 				String contrasena = contrasenaFieldR.getText();
 				String email = textFieldEmailR.getText();

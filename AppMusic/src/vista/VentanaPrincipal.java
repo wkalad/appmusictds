@@ -82,6 +82,7 @@ public class VentanaPrincipal extends JFrame {
 	private static String[] NOMBRES_COLUMNAS = {"Titulo", "Interprete", "Estilo", "Favoritas"};
 	private static String[] NOMBRES_COLUMNAS2 = {"Titulo", "Interprete", "Estilo"};
 	private static String[] NOMBRES_COLUMNAS3 = {"Titulo", "Interprete", "Estilo", "Num Reproducciones"};
+	List<String> estilos;
 	//
 	private JPanel panelActual;
 	private DefaultTableModel modelo;
@@ -127,7 +128,6 @@ public class VentanaPrincipal extends JFrame {
 			UIManager.setLookAndFeel("com.jtattoo.plaf.hifi.HiFiLookAndFeel");
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 				| UnsupportedLookAndFeelException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -191,7 +191,7 @@ public class VentanaPrincipal extends JFrame {
 		
 		
 		JPanel panelCard = new JPanel();
-		//TODO: Aqui estaban los botones del panel izquierda
+
 
 		JPanel panel = new JPanel();
 		frame.getContentPane().add(panel, BorderLayout.CENTER);
@@ -266,9 +266,9 @@ public class VentanaPrincipal extends JFrame {
 		panelBuscar.add(panelBuscarNorte, BorderLayout.NORTH);
 		GridBagLayout gbl_panelBuscarNorte = new GridBagLayout();
 		gbl_panelBuscarNorte.columnWidths = new int[]{0, 0, 0, 0};
-		gbl_panelBuscarNorte.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
+		gbl_panelBuscarNorte.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
 		gbl_panelBuscarNorte.columnWeights = new double[]{1.0, 1.0, 0.0, Double.MIN_VALUE};
-		gbl_panelBuscarNorte.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panelBuscarNorte.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panelBuscarNorte.setLayout(gbl_panelBuscarNorte);
 		
 		JLabel lblNewLabel_3 = new JLabel("Buscar");
@@ -279,13 +279,27 @@ public class VentanaPrincipal extends JFrame {
 		gbc_lblNewLabel_3.gridy = 0;
 		panelBuscarNorte.add(lblNewLabel_3, gbc_lblNewLabel_3);
 		
+		JLabel labelInterprete = new JLabel("Interprete");
+		GridBagConstraints gbc_labelInterprete = new GridBagConstraints();
+		gbc_labelInterprete.insets = new Insets(0, 0, 5, 5);
+		gbc_labelInterprete.gridx = 0;
+		gbc_labelInterprete.gridy = 1;
+		panelBuscarNorte.add(labelInterprete, gbc_labelInterprete);
+		
+		JLabel lblNewLabel_4 = new JLabel("Titulo");
+		GridBagConstraints gbc_lblNewLabel_4 = new GridBagConstraints();
+		gbc_lblNewLabel_4.insets = new Insets(0, 0, 5, 5);
+		gbc_lblNewLabel_4.gridx = 1;
+		gbc_lblNewLabel_4.gridy = 1;
+		panelBuscarNorte.add(lblNewLabel_4, gbc_lblNewLabel_4);
+		
 		
 		txtInterprete = new JTextField();
 		GridBagConstraints gbc_txtInterprete = new GridBagConstraints();
 		gbc_txtInterprete.insets = new Insets(0, 0, 5, 5);
 		gbc_txtInterprete.fill = GridBagConstraints.HORIZONTAL;
 		gbc_txtInterprete.gridx = 0;
-		gbc_txtInterprete.gridy = 1;
+		gbc_txtInterprete.gridy = 2;
 		panelBuscarNorte.add(txtInterprete, gbc_txtInterprete);
 		txtInterprete.setColumns(10);
 		
@@ -295,7 +309,7 @@ public class VentanaPrincipal extends JFrame {
 		gbc_txtTitulo.insets = new Insets(0, 0, 5, 5);
 		gbc_txtTitulo.fill = GridBagConstraints.HORIZONTAL;
 		gbc_txtTitulo.gridx = 1;
-		gbc_txtTitulo.gridy = 1;
+		gbc_txtTitulo.gridy = 2;
 		panelBuscarNorte.add(txtTitulo, gbc_txtTitulo);
 		txtTitulo.setColumns(10);
 		
@@ -304,7 +318,7 @@ public class VentanaPrincipal extends JFrame {
 		gbc_checkBoxFavoritas.anchor = GridBagConstraints.WEST;
 		gbc_checkBoxFavoritas.insets = new Insets(0, 0, 5, 5);
 		gbc_checkBoxFavoritas.gridx = 0;
-		gbc_checkBoxFavoritas.gridy = 2;
+		gbc_checkBoxFavoritas.gridy = 3;
 		panelBuscarNorte.add(checkBoxFavoritas, gbc_checkBoxFavoritas);
 		
 		comboBoxEstilo = new JComboBox();
@@ -314,15 +328,21 @@ public class VentanaPrincipal extends JFrame {
 		gbc_comboBoxEstilo.insets = new Insets(0, 0, 5, 5);
 		gbc_comboBoxEstilo.fill = GridBagConstraints.HORIZONTAL;
 		gbc_comboBoxEstilo.gridx = 1;
-		gbc_comboBoxEstilo.gridy = 2;
+		gbc_comboBoxEstilo.gridy = 3;
 		panelBuscarNorte.add(comboBoxEstilo, gbc_comboBoxEstilo);
+		
+		//Se cargan los estilos
+		estilos = controladorAppMusic.getEstilos();
+		
+		estilos.stream()
+			   .forEach(e -> comboBoxEstilo.addItem(e));
 		
 		JButton botonBuscarCancion = new JButton("buscar");
 		
 		GridBagConstraints gbc_botonBuscarCancion = new GridBagConstraints();
 		gbc_botonBuscarCancion.insets = new Insets(0, 0, 5, 5);
 		gbc_botonBuscarCancion.gridx = 1;
-		gbc_botonBuscarCancion.gridy = 4;
+		gbc_botonBuscarCancion.gridy = 5;
 		panelBuscarNorte.add(botonBuscarCancion, gbc_botonBuscarCancion);
 		
 		JPanel panelTablaCenter = new JPanel();
@@ -401,8 +421,6 @@ public class VentanaPrincipal extends JFrame {
 		gbc_botonEliminarPlaylist.gridy = 2;
 		panelAñadirNorte.add(botonEliminarPlaylist, gbc_botonEliminarPlaylist);
 		
-		
-		////TODO: Tiene que mostrar la misma tabla, por ahora asi.
 		JPanel panelTabla = new JPanel();
 		panelGestionPlaylists.add(panelTabla, BorderLayout.CENTER);
 		GridBagConstraints gbc_botonBuscar_1 = new GridBagConstraints();
@@ -630,11 +648,9 @@ public class VentanaPrincipal extends JFrame {
 				int resultado = fileChooser.showOpenDialog(frame);
 				
 				if(resultado == JFileChooser.APPROVE_OPTION) {
-					//TODO:Aqui y si el archivo no funciona? o es incorrecto
-					System.out.println(fileChooser.getSelectedFile().getPath());
 					String path = fileChooser.getSelectedFile().getPath();
 					controladorAppMusic.cargarCanciones(path);
-					List<String> estilos = controladorAppMusic.getEstilos();
+					estilos = controladorAppMusic.getEstilos();
 					
 					estilos.stream()
 						   .forEach(e -> comboBoxEstilo.addItem(e));		
@@ -1007,8 +1023,6 @@ public class VentanaPrincipal extends JFrame {
 				}else if(panelActual == panelMisPlaylists) {
 					String nombre = list.getSelectedValue();
 					
-					System.out.println("PLaulsit " +  nombre);
-					
 					List<Cancion> canciones = controladorAppMusic.getCancionesPlaylists(nombre);
 					
 					
@@ -1042,7 +1056,6 @@ public class VentanaPrincipal extends JFrame {
 					tabla[i][0] = c.getTitulo();
 					tabla[i][1] = c.getInterprete();
 					tabla[i][2] = c.getEstilo();
-					System.out.println("tit " +  c.getTitulo());
 					
 					i++;
 				}
@@ -1115,5 +1128,4 @@ public class VentanaPrincipal extends JFrame {
 			}
 		});
 	}
-
 }

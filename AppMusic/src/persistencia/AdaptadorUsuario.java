@@ -48,23 +48,10 @@ public class AdaptadorUsuario implements IAdaptadorUsuario {
 		
 		if(eUsuario != null) return ;
 		
-		/*
-		
-		AdaptadorPlaylist adaptadorPlaylist = AdaptadorPlaylist.getUnicaInstancia();
-		for(Playlist playlist : usuario.getPlaylists()) {
-			adaptadorPlaylist.crearPlaylist(playlist);
-		}
-		*/
-		//TODO Canciones recientes igual que arriba
-		
-		
 		//Creamos la tabla y registramos las propiedades
 		
 		eUsuario = new Entidad();
 		eUsuario.setNombre("usuario");
-		
-		
-		//Faltan playlist y canciones
 		
 		eUsuario.setPropiedades(new ArrayList<Propiedad>(
 	            Arrays.asList(

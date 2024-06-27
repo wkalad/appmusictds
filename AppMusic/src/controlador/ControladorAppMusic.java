@@ -34,10 +34,8 @@ public class ControladorAppMusic implements CancionesListener{
 	
 	private CargadorCanciones cargadorCanciones;
 	
-	private Usuario usuarioActual;//TODO Ver esto bien 
+	private Usuario usuarioActual;
 	private Cancion cancionActual = null;
-	
-	//TODO: donde deberia ir el player e instanciarse?
 	private Player player;
 	
 	public static ControladorAppMusic getUnicaInstancia() {
@@ -119,8 +117,6 @@ public class ControladorAppMusic implements CancionesListener{
 		
 		List<Cancion> canciones = catalogoCanciones.getCanciones();
 		
-		//canciones.contains(canciones);
-		
 		Buscador buscador = new BuscadorSimple(canciones);
 		
 		if(!titulo.isEmpty() || titulo != null) {
@@ -192,8 +188,6 @@ public class ControladorAppMusic implements CancionesListener{
 		
 	}
 	
-	
-	//TODO como se eliminan las playlist
 	public void eliminarCancionPlaylist(String nombre, List<String> titulos) {
 		
 		Playlist playlist = usuarioActual.getPlaylists().stream()
@@ -218,13 +212,6 @@ public class ControladorAppMusic implements CancionesListener{
 	}
 	
 	public void anadirCancionPlaylist(String nombre, List<String> titulos) {
-		
-		/*Playlist playlist = usuarioActual.getPlaylists().stream()
-														.filter(p -> p.getNombre().equals(nombre))
-														.findFirst()
-														.orElse(null);
-		
-		*/
 		
 		Playlist playlist = usuarioActual.getPlaylist(nombre);
 		
@@ -330,18 +317,14 @@ public class ControladorAppMusic implements CancionesListener{
 	
 	public void reproducirCancion(String titulo) {
 		Cancion cancion = catalogoCanciones.getCancion(titulo);
-		//TODO:BOPRRAR
 		cancionActual = cancion;
-		System.out.println(cancion.getTitulo());
 		if(player.isRepro()) {
 			player.stop();
 		}
 		
 		usuarioActual.addCancionReciente(cancion);
-		System.out.println(cancion.getNumReproducciones());
 		cancion.addReproduccion();
 		adaptadorCancion.modificarCancion(cancion);
-		System.out.println(adaptadorCancion.recuperarCancion(cancion.getId()).getNumReproducciones());
 
 		adaptadorUsuario.modificarUsuario(usuarioActual);
 		
