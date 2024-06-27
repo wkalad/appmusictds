@@ -42,6 +42,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 import controlador.ControladorAppMusic;
 import javafx.scene.control.ComboBox;
@@ -729,8 +730,10 @@ public class VentanaPrincipal extends JFrame {
 					int fila = tablaTopTen.getSelectedRow();
 					valor = tablaTopTen.getValueAt(fila, 0);
 				}
-				
-				controladorAppMusic.reproducirCancion(valor.toString());	
+				if(valor != null) {
+					controladorAppMusic.reproducirCancion(valor.toString());
+				}
+					
 			}
 		});
 		
@@ -744,24 +747,143 @@ public class VentanaPrincipal extends JFrame {
 		botonSiguiente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String titulo = controladorAppMusic.getCancionActual();
-				int i;
-				for(i = 0; i < table.getRowCount();i++) {
-					Object valor = table.getValueAt(i, 0);
-					if(valor != null && valor.toString().equalsIgnoreCase(titulo)) {
-						break;
+				Object valor = null;
+				if(panelActual == panelBuscar) {
+					int i;
+					for(i = 0; i < table.getRowCount();i++) {
+						Object value = table.getValueAt(i, 0);
+						if(value != null && value.toString().equalsIgnoreCase(titulo)) {
+							break;
+						}
 					}
+					
+					int filas = table.getRowCount();
+					int siguiente = (i + 1) % filas;
+					valor = table.getValueAt(siguiente, 0);
+					
+				}else if(panelActual == panelMisPlaylists) {
+					int i;
+					for(i = 0; i < tablaPlaylist.getRowCount();i++) {
+						Object value = tablaPlaylist.getValueAt(i, 0);
+						if(value != null && value.toString().equalsIgnoreCase(titulo)) {
+							break;
+						}
+					}
+					
+					int filas = tablaPlaylist.getRowCount();
+					int siguiente = (i + 1) % filas;
+					valor = tablaPlaylist.getValueAt(siguiente, 0);
+					
+				}else if(panelActual == panelRecientes) {
+					int i;
+					for(i = 0; i < tablaRecientes.getRowCount();i++) {
+						Object value = tablaRecientes.getValueAt(i, 0);
+						if(value != null && value.toString().equalsIgnoreCase(titulo)) {
+							break;
+						}
+					}
+					
+					int filas = tablaRecientes.getRowCount();
+					int siguiente = (i + 1) % filas;
+					valor = tablaRecientes.getValueAt(siguiente, 0);
+					
+				}else if(panelActual == panelTopTen) {
+					int i;
+					for(i = 0; i < tablaTopTen.getRowCount();i++) {
+						Object value = tablaTopTen.getValueAt(i, 0);
+						if(value != null && value.toString().equalsIgnoreCase(titulo)) {
+							break;
+						}
+					}
+					
+					int filas = tablaTopTen.getRowCount();
+					int siguiente = (i + 1) % filas;
+					valor = tablaTopTen.getValueAt(siguiente, 0);
 				}
 				
-				int filas = table.getRowCount();
-				int siguiente = (i + 1) % filas;
-				Object valor = table.getValueAt(siguiente, 0);
-				controladorAppMusic.reproducirCancion(valor.toString());
+				if(valor != null) {
+					controladorAppMusic.reproducirCancion(valor.toString());
+				}
+				
 			}
 		});
 		
 		botonAtras.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String titulo = controladorAppMusic.getCancionActual();
+				
+				Object valor = null;
+				if(panelActual == panelBuscar) {
+					int i;
+					for(i = 0; i < table.getRowCount();i++) {
+						Object value = table.getValueAt(i, 0);
+						if(value != null && value.toString().equalsIgnoreCase(titulo)) {
+							break;
+						}
+					}
+					
+					int filas = table.getRowCount();
+					
+					if(i == 0)
+						i = filas;
+					int siguiente = (i - 1) % filas;
+					valor = table.getValueAt(siguiente, 0);
+					
+				}else if(panelActual == panelMisPlaylists) {
+					int i;
+					for(i = 0; i < tablaPlaylist.getRowCount();i++) {
+						Object value = tablaPlaylist.getValueAt(i, 0);
+						if(value != null && value.toString().equalsIgnoreCase(titulo)) {
+							break;
+						}
+					}
+					
+					int filas = tablaPlaylist.getRowCount();
+					
+					if(i == 0)
+						i = filas;
+					int siguiente = (i - 1) % filas;
+					valor = tablaPlaylist.getValueAt(siguiente, 0);
+					
+				}else if(panelActual == panelRecientes) {
+					int i;
+					for(i = 0; i < tablaRecientes.getRowCount();i++) {
+						Object value = tablaRecientes.getValueAt(i, 0);
+						if(value != null && value.toString().equalsIgnoreCase(titulo)) {
+							break;
+						}
+					}
+					
+					int filas = tablaRecientes.getRowCount();
+					
+					if(i == 0)
+						i = filas;
+					int siguiente = (i - 1) % filas;
+					valor = tablaRecientes.getValueAt(siguiente, 0);
+					
+				}else if(panelActual == panelTopTen) {
+					int i;
+					for(i = 0; i < tablaTopTen.getRowCount();i++) {
+						Object value = tablaTopTen.getValueAt(i, 0);
+						if(value != null && value.toString().equalsIgnoreCase(titulo)) {
+							break;
+						}
+					}
+					
+					int filas = tablaTopTen.getRowCount();
+					
+					if(i == 0)
+						i = filas;
+					int siguiente = (i - 1) % filas;
+					valor = tablaTopTen.getValueAt(siguiente, 0);
+					
+				}
+				
+				if(valor != null) {
+					controladorAppMusic.reproducirCancion(valor.toString());
+				}
+				
+				/*
 				int i;
 				for(i = 0; i < table.getRowCount();i++) {
 					Object valor = table.getValueAt(i, 0);
@@ -771,11 +893,13 @@ public class VentanaPrincipal extends JFrame {
 				}
 				
 				int filas = table.getRowCount();
+				
 				if(i == 0)
 					i = filas;
 				int siguiente = (i - 1) % filas;
 				Object valor = table.getValueAt(siguiente, 0);
 				controladorAppMusic.reproducirCancion(valor.toString());
+				*/
 			}
 		});
 		
@@ -797,13 +921,9 @@ public class VentanaPrincipal extends JFrame {
 				
 				if(panelActual == panelBuscar) {
 					String lista = list.getSelectedValue();
-					
-					//System.out.println("PLaulsit " +  lista);
-					
-
-					
 					int[] lineas = table.getSelectedRows();
 					Object[][] tabla = new Object[lineas.length][3];
+					
 					List<String> titulos = new LinkedList<>();
 					for(int i = 0; i < lineas.length; i++) {
 						Object valor = table.getValueAt(lineas[i], 0);
@@ -846,12 +966,33 @@ public class VentanaPrincipal extends JFrame {
 		botonMisPlaylists.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+				String nombre = list.getSelectedValue();
+				
+				List<Cancion> canciones = controladorAppMusic.getCancionesPlaylists(nombre);
+				
+				
+				Object[][] tabla = new Object[canciones.size()][3];
+				int i = 0;
+				for(Cancion c:canciones) {
+					tabla[i][0] = c.getTitulo();
+					tabla[i][1] = c.getInterprete();
+					tabla[i][2] = c.getEstilo();
+					
+					i++;
+				}
+				modelo = new DefaultTableModel(tabla, NOMBRES_COLUMNAS2);
+				tablaPlaylist.setModel(modelo);
+				tablaPlaylist.setSelectionBackground(new Color(0, 128, 0));
+				tablaPlaylist.setVisible(true);
+				
+				
 				botonAnadirLista.setVisible(true);
 				botonAnadirLista.setText("Eliminar de la Lista");
 				panelActual.setVisible(false);
 				panelMisPlaylists.setVisible(true);
 				panelActual = panelMisPlaylists;
 				panelReproduccion.setVisible(true);
+				
 				
 			}
 		});
@@ -868,7 +1009,7 @@ public class VentanaPrincipal extends JFrame {
 					
 					System.out.println("PLaulsit " +  nombre);
 					
-					List<Cancion> canciones = controladorAppMusic.getCancionePlaylists(nombre);
+					List<Cancion> canciones = controladorAppMusic.getCancionesPlaylists(nombre);
 					
 					
 					Object[][] tabla = new Object[canciones.size()][3];

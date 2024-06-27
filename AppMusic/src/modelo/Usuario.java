@@ -74,6 +74,13 @@ public class Usuario {
 			return new HashSet<Playlist>(playlists);
 		}
 		
+		public Playlist getPlaylist(String nombre) {
+			return playlists.stream()
+							.filter(p -> p.getNombre().equals(nombre))
+							.findFirst()
+							.orElse(null);
+		}
+		
 		public List<Cancion> getRecientes(){
 			return new LinkedList<Cancion>(recientes);
 		}

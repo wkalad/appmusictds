@@ -57,14 +57,19 @@ public class ControladorAppMusic implements CancionesListener{
 	}
 	
 	
-	public void registrarUsuario(String nombre, String password, String email, String fechaNacimiento) {
-		//TODO: Se deberia controlar mismo nombre de usuario? Fecha DAte?
-		Usuario usuario = new Usuario(nombre, password, email, fechaNacimiento);
-		adaptadorUsuario.crearUsuario(usuario);
-		catalogoUsuarios.addUsuario(usuario);
+	public boolean registrarUsuario(String nombre, String password, String email, String fechaNacimiento) {
+		Usuario usuario = catalogoUsuarios.getUsuario(nombre);
+		if(usuario == null) {
+			usuario = new Usuario(nombre, password, email, fechaNacimiento);
+			adaptadorUsuario.crearUsuario(usuario);
+			catalogoUsuarios.addUsuario(usuario);
+			return true;
+		}else {
+			return false;
+		}
+		
 	}
 	
-	//TODO: Login gestionar con github neceistamos adaptadores?
 	public boolean iniciarSesion(String nombre, String password) {
 		
 		Usuario usuario = catalogoUsuarios.getUsuario(nombre);
@@ -214,11 +219,14 @@ public class ControladorAppMusic implements CancionesListener{
 	
 	public void anadirCancionPlaylist(String nombre, List<String> titulos) {
 		
-		Playlist playlist = usuarioActual.getPlaylists().stream()
+		/*Playlist playlist = usuarioActual.getPlaylists().stream()
 														.filter(p -> p.getNombre().equals(nombre))
 														.findFirst()
 														.orElse(null);
 		
+		*/
+		
+		Playlist playlist = usuarioActual.getPlaylist(nombre);
 		
 		if(playlist == null) {
 			return ;
@@ -316,7 +324,7 @@ public class ControladorAppMusic implements CancionesListener{
 										 .toList();
 	}
 	
-	public List<Cancion> getCancionePlaylists(String nombre){
+	public List<Cancion> getCancionesPlaylists(String nombre){
 		return usuarioActual.getPlaylists().stream().filter(p -> p.getNombre().equals(nombre)).flatMap(p -> p.getCanciones().stream()).toList();
 	}
 	

@@ -38,7 +38,9 @@ public class VentanaLogin extends JFrame {
 	JTextField textFieldUsuarioL;
 	JPasswordField contrasenaFieldL;
 	JLabel usuarioContrIncorrecto;
-	
+	JLabel labelUsuarioExistente;
+	JPanel login;
+	JPanel registro;
 
 	/**
 	 * Launch the application.
@@ -366,9 +368,14 @@ public class VentanaLogin extends JFrame {
 				
 				String fechaNacimiento = fechaFormato.format(date);
 				
-				controladorAppMusic.registrarUsuario(nombre, contrasena, email, fechaNacimiento);
+				boolean registrado = controladorAppMusic.registrarUsuario(nombre, contrasena, email, fechaNacimiento);
 				
-				//TODO:Cambio de pestalla y control de informacion validar
+				if(registrado) {
+					registro.setVisible(false);
+					login.setVisible(true);
+				}else {
+					labelUsuarioExistente.setVisible(true);
+				}
 			}
 		});
 		
@@ -527,7 +534,7 @@ public class VentanaLogin extends JFrame {
 	}
 
 	private void creaLabelUsuarioExistente(JPanel panelMensajesUsuario) {
-		JLabel labelUsuarioExistente = new JLabel("El nombre de usuario ya existe");
+		labelUsuarioExistente = new JLabel("El nombre de usuario ya existe");
 		labelUsuarioExistente.setHorizontalAlignment(SwingConstants.CENTER);
 		labelUsuarioExistente.setForeground(new Color(255, 0, 0));
 		labelUsuarioExistente.setFont(new Font("Verdana", Font.BOLD, 10));
@@ -617,8 +624,8 @@ public class VentanaLogin extends JFrame {
 		// INICIALIZACIÓN JFRAME Y CARDLAYOUR
 		inicializarJFrame();
 		JPanel ventana=creaPanelVentana();
-		JPanel login=crearPanelLogin(ventana);
-		JPanel registro=crearPanelRegistro(ventana);
+		login=crearPanelLogin(ventana);
+		registro=crearPanelRegistro(ventana);
 		
 		// PANEL DE LOGIN
 		JPanel panelLogin=gridBagLayourLogin(login);
