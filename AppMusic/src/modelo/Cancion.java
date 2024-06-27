@@ -66,13 +66,19 @@ public class Cancion {
 	public void addReproduccion() {
 		numReproducciones = numReproducciones + 1;
 	}
-
+	
+	@Override
 	public boolean equals(Object obj) {
 		Cancion cancion = (Cancion) obj;
 		if (this.getTitulo().equals(cancion.getTitulo())) {
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return titulo.hashCode();
 	}
 
 	public boolean isFavorita(Usuario usuario) {
