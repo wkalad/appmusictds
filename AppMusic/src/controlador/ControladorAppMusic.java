@@ -85,8 +85,16 @@ public class ControladorAppMusic implements CancionesListener{
 
 			if (github.isCredentialValid()) {
 				GHUser ghuser = github.getMyself();
-				//TODO UsuarioActual  que pasa con eso?
-				usuarioActual = new Usuario(nombre, "contrasena", ghuser.getEmail(), "27/06/1997");
+
+				Usuario usuario = catalogoUsuarios.getUsuario(nombre);
+				
+				if(usuario == null) {
+					usuario = new Usuario(nombre, "", "", "27/06/1997");
+					adaptadorUsuario.crearUsuario(usuario);
+					catalogoUsuarios.addUsuario(usuario);
+				}				
+				
+				usuarioActual = usuario;				
 				return (ghuser.getLogin().equals(nombre) && github.isCredentialValid());
 			}
 			return false;
@@ -97,7 +105,6 @@ public class ControladorAppMusic implements CancionesListener{
 		return false;
 	}
 	
-	//TODO: Cierre de sesion
 	public boolean cerrarSesion() {
 		usuarioActual = null;
 		return true;
